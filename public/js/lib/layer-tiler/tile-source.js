@@ -22,12 +22,8 @@ var TileSource = module.exports = inherit(ImageSource, /** @lends TileSource pro
         this._options = jQuery.extend({}, this.getDefaults());
     },
     cropTo: function (tile, sx, sy, sw, sh, tx, ty, tw, th) {
-    try{
         tile.getContext()
             .drawImage(this._source.getElement(), sx, sy, sw, sh, tx, ty, tw, th);
-    } catch (e) {
-        debugger;
-    }
 
         return tile;
     },
@@ -45,33 +41,17 @@ var TileSource = module.exports = inherit(ImageSource, /** @lends TileSource pro
 
         return Math.ceil(log2(tilesCount));
     },
-    getTileSizeAtZoom: function (zoom) {
-        var sZoom = this.getZoomBySource(),
-            tileSize = this._options.tileSize,
-            zDiff = sZoom - zoom;
-
-        if(zDiff) {
-            return zDiff > 0?
-                Math.floor(tileSize * 2 * zDiff) :
-                Math.floor(tileSize / 2 / zDiff);
-        }
-        else {
-            return tileSize;
-        }
-    },
     getTile: function (x, y, zoom) {
         if(!this.isTileFound(x, y, zoom)) {
             return null;
         }
 
         var tileSize = this._options.tileSize,
-            tileSizeAtZoom = this.getTileSizeAtZoom(zoom),
             globalPixelPoint = [ x * tileSize, y * tileSize ],
             topLeft = this.fromGlobalPixels(
                 globalPixelPoint,
                 zoom
             ),
-
             bottomRight = this.fromGlobalPixels(
                 [ globalPixelPoint[0] + tileSize, globalPixelPoint[1] + tileSize ],
                 zoom
@@ -93,17 +73,11 @@ var TileSource = module.exports = inherit(ImageSource, /** @lends TileSource pro
             localOffset = this.toLocalPixels(offset, zoom);
 
         return this.cropTo(
-            new Tile(this._options.tileSize),
+            new Tile(tileSize),
             localPoint[0],
             localPoint[1],
             localOffset[0],
             localOffset[1],
-            /*
-            topLeft[0],
-            topLeft[1],
-            offset[0],
-            offset[1],
-            */
             tileOffset[0],
             tileOffset[1],
             offset[0],
@@ -154,24 +128,6 @@ var TileSource = module.exports = inherit(ImageSource, /** @lends TileSource pro
             )
         ];
     },
-    /*
-    fromGlobalPixels: function (globalPixelPoint, zoom) {
-        var size = this.getSourceSizeAtZoom(zoom),
-            width = size[0], height = size[1],
-            tileSize = this._options.tileSize,
-            tilesCount = this.getTilesNumberAtZoom(zoom),
-            pixelsCount = tilesCount * tileSize,
-            offset = [
-                Math.ceil((pixelsCount - width) / 2),
-                Math.ceil((pixelsCount - height) / 2)
-            ];
-
-        return [
-            Math.min(Math.max(globalPixelPoint[0] - offset[0], 0), width),
-            Math.min(Math.max(globalPixelPoint[1] - offset[1], 0), height)
-        ];
-    },
-    */
     /**
      * Calculate number of tiles at the current zoom.
      * @name LayerTiler.getTilesNumberAtZoom
