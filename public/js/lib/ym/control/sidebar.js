@@ -2,9 +2,10 @@ define([
     'ready!ymaps',
     './base',
     './layout/layer-settings',
+    './layout/image-status',
     'jquery',
     'module'
-], function (ymaps, BaseControl, LayerSettingsLayout, jQuery, module) {
+], function (ymaps, BaseControl, LayerSettingsLayout, ImageStatusLayout, jQuery, module) {
 
 var config = module.config();
 
@@ -17,6 +18,7 @@ function SidebarControl(parameters) {
 
     this.options.set({
         contentLayout: LayerSettingsLayout,
+        imageStatusLayout: ImageStatusLayout,
         float: 'none',
         position: { top: 0, right: 0 }
     });
