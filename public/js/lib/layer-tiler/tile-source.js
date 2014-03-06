@@ -57,20 +57,12 @@ var TileSource = module.exports = inherit(ImageSource, /** @lends TileSource pro
                 zoom
             ),
             offset = [ bottomRight[0] - topLeft[0], bottomRight[1] - topLeft[1] ],
+            localPoint = this.toLocalPixels(topLeft, zoom),
+            localOffset = this.toLocalPixels(offset, zoom),
             tileOffset = [
                 topLeft[0] === 0? tileSize - offset[0] : 0,
                 topLeft[1] === 0? tileSize - offset[1] : 0
             ];
-
-        if(zoom === 0) {
-            tileOffset = [
-                Math.round((tileSize - offset[0]) / 2),
-                Math.round((tileSize - offset[1]) / 2)
-            ];
-        }
-
-        var localPoint = this.toLocalPixels(topLeft, zoom),
-            localOffset = this.toLocalPixels(offset, zoom);
 
         return this.cropTo(
             new Tile(tileSize),
@@ -78,8 +70,8 @@ var TileSource = module.exports = inherit(ImageSource, /** @lends TileSource pro
             localPoint[1],
             localOffset[0],
             localOffset[1],
-            tileOffset[0],
-            tileOffset[1],
+            zoom === 0? tileOffset[0] / 2 : tileOffset[0],
+            zoom === 0? tileOffset[1] / 2 : tileOffset[1],
             offset[0],
             offset[1]
         );
