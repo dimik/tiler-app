@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Подготовка слоя тайлов / Создание слоя</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+    <link href="//yandex.st/bootstrap/2.3.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <script data-main="js/app.js" src="js/lib/require/require.js"></script>
+
+    <style type="text/css">
+        html, body {
+            height: 100%;
+        }
+        .ya-fotki-control-group {
+            width: 100px;
+            float: left;
+            margin-left: 0px;
+        }
+        .image-status {
+            padding: 10px;
+            background: white;
+        }
+        .image-status .close {
+            margin: -20px -14px 0 0;
+        }
+        .image-loader {
+            width: 360px;
+            height: 220px;
+        }
+        .preloader {
+            width: 360px;
+        }
+        .layer-settings {
+            width: 220px;
+            /*height: 600px;*/
+        }
+        .drop-zone {
+            text-align: center;
+            min-height: 120px;
+            padding: 19px;
+            margin-bottom: 20px;
+            border: 3px dashed #e3e3e3;
+            -webkit-border-radius: 10px;
+            -moz-border-radius: 10px;
+            border-radius: 10px;
+        }
+        .drop-zone.success {
+            background: #dff0d8;
+            border-color: #d6e9c6;
+        }
+        .drop-zone.info {
+            background: #d9edf7;
+            border-color: #bce8f1;
+        }
+        .drop-zone.error {
+            background: #f2dede;
+            border-color: #eed3d7;
+        }
+        .file-control-group {
+            position: relative;
+            float: left;
+            width: 150px;
+            overflow: hidden;
+        }
+        .input-file-hidden {
+            position: absolute;
+            z-index: 2;
+            top: 0; left: 0;
+            filter: alpha(opacity=0);
+            -ms-filter:'progid:DXImageTransform.Microsoft.Alpha(Opacity=0)';
+            opacity: 0;
+            background-color: transparent;
+            color: transparent;
+        }
+        .header {
+            /* padding: 30px 0; */
+            height: 20%;
+            min-height: 100px;
+        }
+        .page {
+            padding: 0;
+            height: 100%;
+            background-image: url("../header-bg.jpg");
+            background-position: 0 0;
+            background-repeat: no-repeat;
+        }
+        .control-group {
+            margin-top: 20px;
+        }
+        .slim {
+            margin: 0;
+            padding-bottom: 10px;
+            border: none;
+        }
+        .content {
+            height: 80%;
+        }
+        .footer {
+            height: 10%;
+        }
+    </style>
+</head>
+<body>
+    <div class="page container-fluid">
+        <div class="header row-fluid">
+            <div class="span10 offset1">
+                <h1>Подготовка слоя тайлов&nbsp;<span class="badge badge-warning">beta</span></h1>
+                <p class="lead">Создание слоя</p>
+            </div>
+        </div>
+        <div class="content row-fluid" id="YMapsID"></div>
+        <div class="footer row-fluid"></div>
+    </div>
+</body>
+</html>
