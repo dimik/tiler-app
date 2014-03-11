@@ -4,7 +4,7 @@ var config = module.config();
 
 return ymaps.templateLayoutFactory.createClass([
     '<div class="well layer-settings">',
-        '<form>',
+//        '<form>',
         '<div class="row-fluid">',
 
             '{% include options.imageStatusLayout %}',
@@ -41,12 +41,27 @@ return ymaps.templateLayoutFactory.createClass([
                     '</label>',
                 '</div>',
             '</div>',
+            '<div class="control-group">',
+                '<label class="control-label" for="tileOpacity">Непрозрачность тайла</label>',
+                '<div class="controls">',
+                    '<div class="input-append">',
+                        '<input class="span3" type="text" name="tileOpacity" id="tileOpacity" value="{{ data.settings.tileOpacity }}" placeholder="100">',
+                        '<span class="add-on">%</span>',
+                    '</div>',
+                '</div>',
+            '</div>',
+            '<div class="control-group">',
+                '<label class="control-label" for="tileBackground">Цвет фона тайла</label>',
+                '<div class="controls">',
+                    '<input type="text" name="tileBackground" id="tileBackground" value="{{ data.settings.tileBackground }}" placeholder="#FFFFFF, black, rgba(0,0,0,0.0)">',
+                '</div>',
+            '</div>',
             '<div class="form-actions">',
                 '<button type="submit" class="btn btn-primary"{% if state.submitted %} disabled{% endif %}>Далее</button>&nbsp;',
                 '<button type="reset" class="btn{% if state.submitted %} btn-danger{% endif %}">Отменить</button>',
             '</div>',
         '</div>',
-        '</form>',
+//        '</form>',
     '</div>'
 ].join(''), {
     build: function () {
@@ -92,10 +107,7 @@ return ymaps.templateLayoutFactory.createClass([
         control.state.set('submitted', true);
         control.events.fire('submit', {
             target: control,
-            settings: fields.reduce(function (data, field, index) {
-                data[field.name] = field.value;
-                return data;
-            }, {})
+            settings: this._getSettings()
         });
     },
     _onReset: function (e) {
@@ -115,9 +127,15 @@ return ymaps.templateLayoutFactory.createClass([
 
         control.events.fire('change', {
             target: control,
-            name: e.target.name,
-            value: e.target.value
+            settings: this._getSettings()
         });
+    },
+    _getSettings: function () {
+        return this._$element.find('input').serializeArray()
+            .reduce(function (data, field, index) {
+                data[field.name] = field.value;
+                return data;
+            }, {});
     }
 });
 
