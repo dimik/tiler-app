@@ -12,19 +12,32 @@ MapView.prototype = {
     render: function (source, options) {
         this._attachHandlers();
 
+        var map = this._map;
+
+/*
+        var Layer = this._createLayer(source, options);
+
+        this._map.layers.add(new Layer());
+*/
+
         this._layer = this._createLayer(source, options);
-        // Добавим слой в хранилище слоев под ключом options.layerKey.
         ymaps.layer.storage.add(options.name, this._layer);
 
         this._mapType = this._createMapType(options);
-        // Добавим в хранилище типов карты.
         ymaps.mapType.storage.add(options.name, this._mapType);
 
-        this._map.setType(options.name);
-        this._map.setZoom(3);
+    this._typeSelector = this._createTypeSelector();
+    this._map.controls.add(this._typeSelector);
 
-        this._map.controls.add(new ymaps.control.TypeSelector([options.name]));
+        //map.controls.get('typeSelector')
+        this._typeSelector
+            // .addMapType(options.name, 0);
+            .addMapType(this._mapType, 0);
 
+        map.setType(options.name);
+        map.setZoom(options.maxZoom);
+
+        // map.options.set('projection', new ymaps.projection.Cartesian([[-10, -10], [10, 10]], [false, false]));
 
         return this;
     },
@@ -38,13 +51,20 @@ MapView.prototype = {
         return new ymaps.Map(
             config.container,
             config.state,
-            //config.options
-                ymaps.util.extend({}, config.options, {
-                    projection: new ymaps.projection.Cartesian([[-10, -10], [10, 10]], [false, false])
-                })
+            config.options
         );
     },
+    _createTypeSelector: function () {
+        return new ymaps.control.TypeSelector([
+            'yandex#map',
+            'yandex#satellite',
+            'yandex#hybrid'
+        ]);
+    },
     _createLayer: function (tileSource, options) {
+        var zoomRange = [options.minZoom, options.maxZoom],
+            tileType = options.tileType;
+
         return function () {
             var layer = new ymaps.Layer('');
 
@@ -55,7 +75,7 @@ MapView.prototype = {
                     var tile = tileSource.getTile(tileNumber[0], tileNumber[1], tileZoom);
 
                     if(tile) {
-                        return tile.toDataURL(options.tileType);
+                        return tile.toDataURL(tileType);
                     }
                 }
 
@@ -65,10 +85,24 @@ MapView.prototype = {
             layer.getZoomRange = function () {
                 var defer = new ymaps.vow.Deferred();
 
-                defer.resolve([options.minZoom, options.maxZoom]);
+                defer.resolve(zoomRange);
 
                 return defer.promise();
             };
+
+            tileSource.events
+                .on('optionschange', function (e) {
+                    var options = tileSource.getOptions();
+
+                    zoomRange[0] = options.minZoom;
+                    zoomRange[1] = options.maxZoom;
+                    tileType = options.tileType;
+                    map.setZoom(options.maxZoom);
+
+                    layer.events.fire('zoomrangechange');
+
+                    layer.update();
+                });
 
             return layer;
         };
