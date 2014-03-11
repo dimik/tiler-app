@@ -76,8 +76,7 @@ LayerSettingsMapView.prototype = {
     },
     _onChange: function (e) {
         this.events.trigger(jQuery.Event('change', {
-            name: e.get('name'),
-            value: e.get('value')
+            settings: e.get('settings')
         }));
     },
     _formatImageName: function (name) {
