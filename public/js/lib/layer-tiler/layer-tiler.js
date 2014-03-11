@@ -21,8 +21,8 @@ var LayerTiler = module.exports = inherit(/** @lends LayerTiler prototype. */ {
      * @param {Object} options LayerTiler options.
      */
     __constructor: function (options) {
-        this._source = new TileSource();
         this._options = this._extend({}, this.getDefaults(), options);
+        this._source = new TileSource(this._options);
         this.events = new events.EventEmitter();
         this._state = null;
     },
@@ -47,8 +47,9 @@ var LayerTiler = module.exports = inherit(/** @lends LayerTiler prototype. */ {
         var defer = new Vow.Deferred(),
             options = this._options,
             source = this._source,
-            minZoom = ~~options.minZoom,
-            maxZoom = isFinite(options.maxZoom)? ~~options.maxZoom : source.getZoomBySource(),
+            sourceOptions = source.getOptions(),
+            minZoom = ~~sourceOptions.minZoom,
+            maxZoom = isFinite(sourceOptions.maxZoom)? ~~sourceOptions.maxZoom : source.getZoomBySource(),
             handlers = [
                 this._createFolder.bind(this, options.output)
             ];
@@ -103,10 +104,7 @@ var LayerTiler = module.exports = inherit(/** @lends LayerTiler prototype. */ {
         var defer = new Vow.Deferred();
 
         this._source.getTile(x, y, zoom)
-            .save(
-                this.getTileUrl(x, y, zoom),
-                this._options.tileType
-            )
+            .save(this.getTileUrl(x, y, zoom))
             .done(function (res) {
                 defer.notify(util.format('rendering tile: zoom=%s, x=%s, y=%s', zoom, x, y));
                 defer.resolve(res);
@@ -175,9 +173,10 @@ var LayerTiler = module.exports = inherit(/** @lends LayerTiler prototype. */ {
      * @return {String} Tile path and name.
      */
     getTileUrl: function (x, y, zoom) {
-        var options = this._options;
+        var options = this._options,
+            tileType = this._source.getOptions().tileType;
 
-        return util.format(options.tileUrlTemplate, options.output, zoom, x, y, options.tileType.replace('image/', ''));
+        return util.format(options.tileUrlTemplate, options.output, zoom, x, y, tileType.replace('image/', ''));
     },
     getOptons: function () {
         return this._options;
@@ -217,10 +216,7 @@ var LayerTiler = module.exports = inherit(/** @lends LayerTiler prototype. */ {
     getDefaults: function () {
         return {
             output: 'tiles',
-            tileUrlTemplate: '%s/%s/%s-%s.%s',
-            tileSize: 256,
-            tileType: 'image/png',
-            minZoom: 0
+            tileUrlTemplate: '%s/%s/%s-%s.%s'
         };
     }
 });

@@ -4,8 +4,9 @@ define([
     'canvas',
     'image-source',
     'tile',
+    'events',
     'module'
-], function (inherit, jQuery, Canvas, ImageSource, Tile, module) {
+], function (inherit, jQuery, Canvas, ImageSource, Tile, events, module) {
 
 /**
  * @class
@@ -16,16 +17,28 @@ var TileSource = module.exports = inherit(ImageSource, /** @lends TileSource pro
     /**
      * @constructor
      */
-    __constructor: function () {
+    __constructor: function (options) {
         this.__base.apply(this, arguments);
 
-        this._options = jQuery.extend({}, this.getDefaults());
+        this._options = jQuery.extend({}, this.getDefaults(), options);
+        this.events = new events.EventEmitter();
+    },
+    open: function () {
+        var promise = this.__base.apply(this, arguments);
+
+        return promise.then(function (res) {
+            this._options.maxZoom = this.getZoomBySource();
+
+            return res;
+        }, this);
     },
     cropTo: function (tile, sx, sy, sw, sh, tx, ty, tw, th) {
-        tile.getContext()
-            .drawImage(this._source.getElement(), sx, sy, sw, sh, tx, ty, tw, th);
+        var options = this._options;
 
-        return tile;
+        return tile
+            .setOpacity(options.tileOpacity)
+            .setFillStyle(options.tileBackground)
+            .draw(this._source.getElement(), sx, sy, sw, sh, tx, ty, tw, th);
     },
     getZoomBySource: function () {
         var tileSize = this._options.tileSize,
@@ -75,6 +88,17 @@ var TileSource = module.exports = inherit(ImageSource, /** @lends TileSource pro
             offset[0],
             offset[1]
         );
+    },
+    getOptions: function () {
+        return this._options;
+    },
+    setOptions: function (options) {
+        this.events.emit('optionschange', {
+            target: this,
+            options: jQuery.extend(this._options, options)
+        });
+
+        return this;
     },
     toLocalPixels: function (point, zoom) {
         var sZoom = this.getZoomBySource(),
@@ -146,7 +170,11 @@ var TileSource = module.exports = inherit(ImageSource, /** @lends TileSource pro
     },
     getDefaults: function () {
         return {
-            tileSize: 256
+            tileSize: 256,
+            tileType: 'image/png',
+            tileBackground: 'rgba(0,0,0,0.0)',
+            tileOpacity: 1.0,
+            minZoom: 0
         };
     }
 });

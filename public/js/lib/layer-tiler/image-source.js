@@ -93,7 +93,7 @@ var ImageSource = module.exports = inherit(/** @lends ImageSource prototype. */ 
     save: function (url, type) {
         var defer = new Vow.Deferred();
 
-        this._source.toBuffer(type, function (err, buf) {
+        this._source.toBuffer(type || this._options.tileType, function (err, buf) {
             if(err) {
                 defer.reject(err);
             }

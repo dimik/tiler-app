@@ -4,11 +4,7 @@ var Canvas = require('canvas'),
     fs = require('fs'),
     inherit = require('inherit'),
     Vow = require('vow'),
-    ImageSource = require('./image-source');
-
-/**
- * @class
- * @name Tile
+    ImageSource = require('./image-source'); /** * @class * @name Tile
  * @augments ImageSource
  * @param {Number} width Tile width.
  * @param {Number} height Tile height.
@@ -57,6 +53,39 @@ var Tile = module.exports = inherit(ImageSource, /** @lends Tile prototype. */ {
         ctx.drawImage(this._source.getElement(), 0, 0, size, size);
 
         this._source = canvas;
+
+        return this;
+    },
+    draw: function (source, sx, sy, sw, sh, tx, ty, tw, th) {
+        this.getContext()
+            .drawImage(source, sx, sy, sw, sh, tx, ty, tw, th);
+
+        return this;
+    },
+    getFillStyle: function () {
+        return this.getSource().getContext().fillStyle;
+    },
+    /**
+     * @see http://www.w3schools.com/cssref/css_colors_legal.asp
+     */
+    setFillStyle: function (fillStyle) {
+        var ctx = this.getSource().getContext(),
+            tmp = ctx.globalCompositeOperation;
+
+        ctx.globalCompositeOperation = 'destination-over';
+        ctx.fillStyle = fillStyle;
+        ctx.fillRect(0, 0, this.getWidth(), this.getHeight());
+        ctx.globalCompositeOperation = tmp;
+
+        return this;
+    },
+    getOpacity: function () {
+        return this.getSource().getContext().globalAlpha;
+    },
+    setOpacity: function (opacity) {
+        this.getSource().getContext().globalAlpha = opacity;
+
+        return this;
     },
     toDataURL: function (type) {
         return this.getSource().getElement().toDataURL(type);
