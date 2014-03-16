@@ -18,9 +18,10 @@ LayerSettingsMapView.prototype = {
     render: function (data) {
         this._map.controls.add(this._control);
         if(data) {
-            jQuery.extend(data.source, {
-                size: this._formatImageSize(data.source.size),
-                name: this._formatImageName(data.source.name)
+            jQuery.extend(data, {
+                imageSize: this._formatImageSize(data.imageSize),
+                imageName: this._formatImageName(data.imageName),
+                tileOpacity: data.tileOpacity * 100
             });
             this._control.data.set(data);
         }

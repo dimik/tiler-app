@@ -21,20 +21,20 @@ MapView.prototype = {
 */
 
         this._layer = this._createLayer(source, options);
-        ymaps.layer.storage.add(options.name, this._layer);
+        ymaps.layer.storage.add(options.layerName, this._layer);
 
         this._mapType = this._createMapType(options);
-        ymaps.mapType.storage.add(options.name, this._mapType);
+        ymaps.mapType.storage.add(options.layerName, this._mapType);
 
     this._typeSelector = this._createTypeSelector();
     this._map.controls.add(this._typeSelector);
 
         //map.controls.get('typeSelector')
         this._typeSelector
-            // .addMapType(options.name, 0);
+            // .addMapType(options.layerName, 0);
             .addMapType(this._mapType, 0);
 
-        map.setType(options.name);
+        map.setType(options.layerName);
         map.setZoom(options.maxZoom);
 
         // map.options.set('projection', new ymaps.projection.Cartesian([[-10, -10], [10, 10]], [false, false]));
@@ -62,7 +62,8 @@ MapView.prototype = {
         ]);
     },
     _createLayer: function (tileSource, options) {
-        var zoomRange = [options.minZoom, options.maxZoom],
+        var map = this._map,
+            zoomRange = [options.minZoom, options.maxZoom],
             tileType = options.tileType;
 
         return function () {
@@ -111,7 +112,7 @@ MapView.prototype = {
         var layers = options.backgroundMapType?
                 ymaps.mapType.storage.get(options.backgroundMapType).getLayers() : [];
 
-        return new ymaps.MapType(options.name, layers.concat([options.name]));
+        return new ymaps.MapType(options.layerName, layers.concat([options.layerName]));
     },
     _attachHandlers: function () {
         this._map.events
