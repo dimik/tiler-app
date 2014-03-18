@@ -21,8 +21,9 @@ requirejs.config({
         tile: 'layer-tiler/tile',
         'tile-source': 'layer-tiler/tile-source',
         'image-source': 'layer-tiler/image-source',
-        ymaps: '//api-maps.yandex.ru/2.1-dev/?lang=ru-RU&load=package.full',
-        ready: 'ym/ready'
+        ymaps: '//api-maps.yandex.ru/2.1-dev/?lang=ru-RU&load=package.full&mode=debug',
+        ready: 'ym/ready',
+        colorpicker: 'bootstrap-colorpicker/dist/js/bootstrap-colorpicker'
     },
     config: {
         fs: {
@@ -53,6 +54,10 @@ requirejs.config({
         },
         jquery: {
             exports: '$'
+        },
+        colorpicker: {
+            deps: ['jquery'],
+            exports: '$.fn.colorpicker'
         },
         bootstrap: {
             deps: ['jquery'],

@@ -3,9 +3,11 @@ define([
     './base',
     './layout/layer-settings',
     './layout/image-status',
+    './layout/tile-type',
+    './layout/color-picker',
     'jquery',
     'module'
-], function (ymaps, BaseControl, LayerSettingsLayout, ImageStatusLayout, jQuery, module) {
+], function (ymaps, BaseControl, LayerSettingsLayout, ImageStatusLayout, TileTypeLayout, ColorPickerLayout, jQuery, module) {
 
 var config = module.config();
 
@@ -19,6 +21,8 @@ function SidebarControl(parameters) {
     this.options.set({
         contentLayout: LayerSettingsLayout,
         imageStatusLayout: ImageStatusLayout,
+        tileTypeLayout: TileTypeLayout,
+        colorPickerLayout: ColorPickerLayout,
         float: 'none',
         position: { top: 0, right: 0 }
     });

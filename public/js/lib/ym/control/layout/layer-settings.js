@@ -1,4 +1,4 @@
-define(['ready!ymaps', 'jquery', 'module'], function (ymaps, jQuery, module) {
+define(['ready!ymaps', 'jquery', 'module', 'colorpicker'], function (ymaps, jQuery, module) {
 
 var config = module.config();
 
@@ -27,35 +27,11 @@ return ymaps.templateLayoutFactory.createClass([
                     '<input type="checkbox" name="georeferenced" {% if data.georeferenced %}checked{% endif %}>Геопривязанный слой',
                 '</label>',
             '</div>',
-            '<div class="control-group">',
-                '<label class="control-label">Формат тайлов</label>',
-                '<div class="controls">',
-                    '<label class="radio inline">',
-                        '<input type="radio" name="tileType" value="image/png" {% if data.tileType == "image/png" %}checked{% endif %}>png',
-                    '</label>',
-                    '<label class="radio inline">',
-                        '<input type="radio" name="tileType" value="image/jpeg" {% if data.tileType == "image/jpeg" %}checked{% endif %}>jpeg',
-                    '</label>',
-                    '<label class="radio inline">',
-                        '<input type="radio" name="tileType" value="image/gif" {% if data.tileType == "image/gif" %}checked{% endif %}>gif',
-                    '</label>',
-                '</div>',
-            '</div>',
-            '<div class="control-group">',
-                '<label class="control-label" for="tileOpacity">Непрозрачность тайла</label>',
-                '<div class="controls">',
-                    '<div class="input-append">',
-                        '<input class="span3" type="text" name="tileOpacity" id="tileOpacity" value="{{ data.tileOpacity }}" placeholder="100">',
-                        '<span class="add-on">%</span>',
-                    '</div>',
-                '</div>',
-            '</div>',
-            '<div class="control-group">',
-                '<label class="control-label" for="tileBackground">Цвет фона тайла</label>',
-                '<div class="controls">',
-                    '<input type="text" name="tileBackground" id="tileBackground" value="{{ data.tileBackground }}" placeholder="#FFFFFF, black, rgba(0,0,0,0.0)">',
-                '</div>',
-            '</div>',
+
+            '{% include options.tileTypeLayout %}',
+
+            '{% include options.colorPickerLayout %}',
+
             '<div class="form-actions">',
                 '<button type="submit" class="btn btn-primary"{% if state.submitted %} disabled{% endif %}>Далее</button>&nbsp;',
                 '<button type="reset" class="btn{% if state.submitted %} btn-danger{% endif %}">Отменить</button>',
