@@ -6,21 +6,22 @@ define([
     'preloader-map-view',
     'image-reader-map-view',
     'layer-settings-map-view',
+    'tile-source-layer-map-view',
     'layer-tiler',
     'tile-source',
     'app-state-auth'
-], function (ymaps, jQuery, MapView, PopupMapView, PreloaderMapView, ImageReaderMapView, LayerSettingsMapView, LayerTiler, TileSource, AuthState) {
+], function (ymaps, jQuery, MapView, PopupMapView, PreloaderMapView, ImageReaderMapView, LayerSettingsMapView, TileSourceLayerMapView, LayerTiler, TileSource, AuthState) {
 
 function TilerApp() {
     this._data = new ymaps.data.Manager(this.getDefaults());
-    this._mapView = new MapView();
 
-    var map = this._mapView.getMap();
+    var map = new MapView();
 
     this.popup = new PopupMapView(map);
     this.preloader = new PreloaderMapView(map);
     this.reader = new ImageReaderMapView(map);
     this.sidebar = new LayerSettingsMapView(map);
+    this._tileSourceLayer = new TileSourceLayerMapView(map);
     this.tiler = new LayerTiler();
     this._tileSource = this._createTileSource();
 
@@ -47,7 +48,7 @@ TilerApp.prototype = {
         return this._tileSource;
     },
     renderSourceLayer: function () {
-        this._mapView.render(
+        this._tileSourceLayer.render(
             this.getTileSource(),
             this.getData()
         );
