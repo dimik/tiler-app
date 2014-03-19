@@ -1,18 +1,15 @@
 define([
     'jquery',
-    'app-state-base',
-    'app-state-image-load',
-    'app-state-layer-process'
-], function (jQuery, StateBase, ImageLoadState, LayerProcessState) {
+    'inherit',
+    'app-state-base'
+], function (jQuery, inherit, AppStateBase) {
 
-    function LayerSetupState(app) {
-        this._name = 'layer-setup';
+    return inherit(AppStateBase, {
+        __constructor: function () {
+            this.__base.apply(this, arguments);
 
-        StateBase.apply(this, arguments);
-    }
-
-    jQuery.extend(LayerSetupState.prototype, StateBase.prototype, {
-        contructor: LayerSetupState,
+            this._name = 'layer-setup';
+        },
         init: function () {
             var app = this._app;
 
@@ -38,7 +35,7 @@ define([
             this._app.sidebar.events.off();
         },
         _onSetupSubmit: function (e) {
-            this._changeState(LayerProcessState);
+            this._changeState('layer-process');
         },
         _onSetupChange: function (e) {
             var app = this._app,
@@ -54,9 +51,7 @@ define([
             });
         },
         _onSetupCancel: function (e) {
-            this._changeState(ImageLoadState);
+            this._changeState('image-load');
         }
     });
-
-    return LayerSetupState;
 });

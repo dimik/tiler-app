@@ -1,18 +1,15 @@
 define([
     'jquery',
-    'app-state-base',
-    'app-state-layer-setup',
-    'app-state-layer-code'
-], function (jQuery, StateBase, LayerSetupState, LayerCodeState) {
+    'inherit',
+    'app-state-base'
+], function (jQuery, inherit, AppStateBase) {
 
-    function LayerProcessState(app) {
-        this._name = 'layer-process';
+    return inherit(AppStateBase, {
+        __contructor: function () {
+            this.__base.apply(this, arguments);
 
-        StateBase.apply(this, arguments);
-    }
-
-    jQuery.extend(LayerProcessState.prototype, StateBase.prototype, {
-        contructor: LayerProcessState,
+            this._name = 'layer-process';
+        },
         init: function () {
             var app = this._app;
 
@@ -45,7 +42,7 @@ define([
             this._app.sidebar.events.off();
         },
         _onComplete: function (res) {
-            this._changeState(LayerCodeState);
+            this._changeState('layer-code');
         },
         _onProgress: function (v) {
             this._app.preloader.render(v);
@@ -54,12 +51,10 @@ define([
             this._app.popup.render({
                 content: err
             });
-            this._changeState(LayerSetupState);
+            this._changeState('layer-setup');
         },
         _onCancel: function (e) {
-            this._changeState(LayerSetupState);
+            this._changeState('layer-setup');
         }
     });
-
-    return LayerProcessState;
 });

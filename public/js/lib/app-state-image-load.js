@@ -1,17 +1,15 @@
 define([
     'jquery',
+    'inherit',
     'app-state-base',
-    'app-state-layer-setup'
-], function (jQuery, StateBase, LayerSetupState) {
+], function (jQuery, inherit, AppStateBase) {
 
-    function ImageLoadState(app) {
-        this._name = 'image-load';
+    return inherit(AppStateBase, {
+        __constructor: function () {
+            this.__base.apply(this, arguments);
 
-        StateBase.apply(this, arguments);
-    }
-
-    jQuery.extend(ImageLoadState.prototype, StateBase.prototype, {
-        constructor: ImageLoadState,
+            this._name = 'image-load';
+        },
         init: function () {
             this._attachHandlers();
             this._app.reader.render();
@@ -44,7 +42,7 @@ define([
                         imageHeight: res.height,
                         tileType: e.source.type
                     });
-                    this._changeState(LayerSetupState);
+                    this._changeState('layer-setup');
                 }, this);
         },
         _onImageError: function (e) {
@@ -61,6 +59,4 @@ define([
                     });
         }
     });
-
-    return ImageLoadState;
 });

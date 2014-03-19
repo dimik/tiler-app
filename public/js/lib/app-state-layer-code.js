@@ -1,16 +1,15 @@
 define([
     'jquery',
+    'inherit',
     'app-state-base'
-], function (jQuery, StateBase) {
+], function (jQuery, inherit, AppStateBase) {
 
-    function LayerCodeState(app) {
-        this._name = 'layer-code';
+    return inherit(AppStateBase, {
+        __contructor: function () {
+            this.__base.apply(this, arguments);
 
-        StateBase.apply(this, arguments);
-    }
-
-    jQuery.extend(LayerCodeState.prototype, StateBase.prototype, {
-        contructor: LayerCodeState,
+            this._name = 'layer-code';
+        },
         init: function () {
             this._attachHandlers();
         },
@@ -22,6 +21,4 @@ define([
         _detachHandlers: function () {
         }
     });
-
-    return LayerCodeState;
 });

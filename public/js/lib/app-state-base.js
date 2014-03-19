@@ -1,21 +1,20 @@
-define(function () {
-    function AppStateBase(app) {
-        this._app = app;
-        this.init();
-    }
+define([
+    'inherit'
+], function (inherit) {
 
-    AppStateBase.prototype = {
-        constructor: AppStateBase,
+    return inherit({
+        __constructor: function (app) {
+            this._app = app;
+            this.init();
+        },
         getName: function () {
             return this._name;
         },
         init: function () {},
         destroy: function () {},
-        _changeState: function (AppState) {
+        _changeState: function (state) {
             this.destroy();
-            this._app.setState(new AppState(this._app));
+            this._app.setState(state);
         }
-    };
-
-    return AppStateBase;
+    });
 });

@@ -1,6 +1,5 @@
 define([
     'ready!ymaps',
-    'jquery',
     'map-view',
     'popup-map-view',
     'preloader-map-view',
@@ -9,8 +8,8 @@ define([
     'tile-source-layer-map-view',
     'layer-tiler',
     'tile-source',
-    'app-state-auth'
-], function (ymaps, jQuery, MapView, PopupMapView, PreloaderMapView, ImageReaderMapView, LayerSettingsMapView, TileSourceLayerMapView, LayerTiler, TileSource, AuthState) {
+    'app-state-factory'
+], function (ymaps, MapView, PopupMapView, PreloaderMapView, ImageReaderMapView, LayerSettingsMapView, TileSourceLayerMapView, LayerTiler, TileSource, AppStateFactory) {
 
 function TilerApp() {
     this._data = new ymaps.data.Manager(this.getDefaults());
@@ -24,14 +23,15 @@ function TilerApp() {
     this._tileSourceLayer = new TileSourceLayerMapView(map);
     this.tiler = new LayerTiler();
     this._tileSource = this._createTileSource();
+    this._stateFactory = new AppStateFactory(this);
 
-    this.setState(new AuthState(this));
+    this.setState('user-auth');
     this._attachHandlers();
 }
 
 TilerApp.prototype = {
     setState: function (state) {
-        this._state = state;
+        this._state = this._stateFactory.create(state);
     },
     getData: function () {
         return this._data.getAll();
