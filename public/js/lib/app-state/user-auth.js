@@ -1,15 +1,17 @@
-define([
-    'jquery',
+modules.define('app-state-user-auth', [
     'inherit',
+    'jquery',
     'app-state-base'
-], function (jQuery, inherit, AppStateBase) {
+], function (provide, inherit, jQuery, AppStateBase) {
 
-    return inherit(AppStateBase, {
-        __constructor: function () {
-            this.__base.apply(this, arguments);
+    provide(
+        inherit(AppStateBase, {
+            __constructor: function () {
+                this.__base.apply(this, arguments);
 
-            this._name = 'user-auth';
-            this._changeState('image-load');
-        }
-    });
+                this._name = 'user-auth';
+                this._changeState('image-load');
+            }
+        })
+    );
 });

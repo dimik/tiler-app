@@ -1,24 +1,26 @@
-define([
-    'jquery',
+modules.define('app-state-image-load', [
     'inherit',
+    'jquery',
     'app-state-base'
-], function (jQuery, inherit, AppStateBase) {
+], function (provide, inherit, jQuery, AppStateBase) {
 
-    return inherit(AppStateBase, {
-        __contructor: function () {
-            this.__base.apply(this, arguments);
+    provide(
+        inherit(AppStateBase, {
+            __contructor: function () {
+                this.__base.apply(this, arguments);
 
-            this._name = 'layer-code';
-        },
-        init: function () {
-            this._attachHandlers();
-        },
-        destroy: function () {
-            this._detachHandlers();
-        },
-        _attachHandlers: function () {
-        },
-        _detachHandlers: function () {
-        }
-    });
+                this._name = 'layer-code';
+            },
+            init: function () {
+                this._attachHandlers();
+            },
+            destroy: function () {
+                this._detachHandlers();
+            },
+            _attachHandlers: function () {
+            },
+            _detachHandlers: function () {
+            }
+        })
+    );
 });

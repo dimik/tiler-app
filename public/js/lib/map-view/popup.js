@@ -1,89 +1,84 @@
-define([
-    'ready!ymaps',
-    'ym/control/centered',
-    'ym/control/layout/popup',
+modules.define('map-view-popup', [
+    'inherit',
     'jquery',
-    'module'
-], function (ymaps, CenteredControl, PopupLayout, jQuery, module) {
+    'ymaps',
+    'ymaps-control-centered',
+    'ymaps-layout-popup'
+], function (provide, inherit, jQuery, ymaps, CenteredControl, PopupLayout) {
 
-var config = module.config();
+    provide(
+        inherit({
+            __constructor: function (map) {
+                this.events = jQuery({});
+                this._map = map;
+                this._control = this._createControl();
+                this._timeoutId == null;
+                this._data = null;
+            },
+            render: function (data) {
+                this._map.controls.add(this._control);
+                this._attachHandlers();
 
-function ImageReaderMapView(map) {
-    this.events = jQuery({});
-    this._map = map;
-    this._control = this._createControl();
-    this._timeoutId == null;
-    this._data = null;
-}
+                this._timeoutId = window.setTimeout(function () {
+                    this._fireEvent('cancel');
+                    this.clear();
+                }.bind(this), 3000);
 
-ImageReaderMapView.prototype = {
-    constructor: ImageReaderMapView,
-    render: function (data) {
-        this._map.controls.add(this._control);
-        this._attachHandlers();
+                if(data) {
+                    this._data = data;
+                    this._control.data.set(data);
+                }
 
-        this._timeoutId = window.setTimeout(function () {
-            this._fireEvent('cancel');
-            this.clear();
-        }.bind(this), 3000);
+                return this;
+            },
+            clear: function () {
+                this._detachHandlers();
+                this._map.controls.remove(this._control);
+                this._data = null;
+                if(this._timeoutId) {
+                    window.clearTimeout(this._timeoutId);
+                    this._timeoutId = null;
+                }
 
-        if(data) {
-            this._data = data;
-            this._control.data.set(data);
-        }
+                return this;
+            },
+            getData: function () {
+                return this._data;
+            },
+            show: function () {
+                this._control.options.set('visible', true);
 
-        return this;
-    },
-    clear: function () {
-        this._detachHandlers();
-        this._map.controls.remove(this._control);
-        this._data = null;
-        if(this._timeoutId) {
-            window.clearTimeout(this._timeoutId);
-            this._timeoutId = null;
-        }
+                return this;
+            },
+            hide: function () {
+                this._control.options.set('visible', false);
 
-        return this;
-    },
-    getData: function () {
-        return this._data;
-    },
-    show: function () {
-        this._control.options.set('visible', true);
-
-        return this;
-    },
-    hide: function () {
-        this._control.options.set('visible', false);
-
-        return this;
-    },
-    _createControl: function (data, options) {
-        return new CenteredControl({
-            data: data,
-            options: {
-                float: 'none',
-                contentBodyLayout: PopupLayout
+                return this;
+            },
+            _createControl: function (data, options) {
+                return new CenteredControl({
+                    data: data,
+                    options: {
+                        float: 'none',
+                        contentBodyLayout: PopupLayout
+                    }
+                });
+            },
+            _attachHandlers: function () {
+                this._control.events
+                    .add('cancel', this._onCancel, this);
+            },
+            _detachHandlers: function () {
+                this._control.events
+                    .remove('cancel', this._onCancel, this);
+            },
+            _onCancel: function (e) {
+                this._fireEvent('cancel');
+                this.clear();
+            },
+            _fireEvent: function (e, data) {
+                this.events.trigger(jQuery.Event(e, data));
             }
         });
-    },
-    _attachHandlers: function () {
-        this._control.events
-            .add('cancel', this._onCancel, this);
-    },
-    _detachHandlers: function () {
-        this._control.events
-            .remove('cancel', this._onCancel, this);
-    },
-    _onCancel: function (e) {
-        this._fireEvent('cancel');
-        this.clear();
-    },
-    _fireEvent: function (e, data) {
-        this.events.trigger(jQuery.Event(e, data));
-    }
-};
-
-return ImageReaderMapView;
-
+    );
 });

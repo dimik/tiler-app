@@ -1,24 +1,22 @@
-define(function (require, exports, module) {
+modules.define('fs', [
+    'app-config',
+    'jquery-yandex-disk'
+], function (provide, config, YaDisk) {
 
-var config = module.config();
+    var disk = $.YaDisk({ token: config.token });
 
-var inherit = require('inherit'),
-    YaDisk = require('ya-disk'),
-    disk = $.YaDisk({ token: config.token });
-
-return {
-    writeFile: function (path, buf, fn) {
-        disk.request('put', { path: path, file: buf, type: 'image/png' })
-            .then(function (res) {
-                fn(null, res);
-            }, fn);
-    },
-    mkdir: function (path, fn) {
-        disk.request('mkdir', { path: path })
-            .then(function (res) {
-                fn(null, res);
-            }, fn);
-    }
-};
-
+    provide({
+        writeFile: function (path, buf, fn) {
+            disk.request('put', { path: path, file: buf, type: 'image/png' })
+                .then(function (res) {
+                    fn(null, res);
+                }, fn);
+        },
+        mkdir: function (path, fn) {
+            disk.request('mkdir', { path: path })
+                .then(function (res) {
+                    fn(null, res);
+                }, fn);
+        }
+    });
 });
