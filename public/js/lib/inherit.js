@@ -1,7 +1,8 @@
 /**
  * @module inherit
- * @version 2.1.0
+ * @version 2.2.1
  * @author Filatov Dmitry <dfilatov@yandex-team.ru>
+ * @description This module provides some syntax sugar for "class" declarations, constructors, mixins, "super" calls and static members.
  */
 
 (function(global) {
@@ -69,7 +70,11 @@ function override(base, res, add) {
         if(isFunction(prop) &&
                 (!hasIntrospection || prop.toString().indexOf('.__base') > -1)) {
             res[name] = (function(name, prop) {
-                var baseMethod = base[name] || noOp;
+                var baseMethod = base[name]?
+                        base[name] :
+                        name === '__constructor'? // case of inheritance from plane function
+                            res.__self.__parent :
+                            noOp;
                 return function() {
                     var baseSaved = this.__base;
                     this.__base = baseMethod;
@@ -98,6 +103,14 @@ function applyMixins(mixins, res) {
     return res || mixins[0];
 }
 
+/**
+* Creates class
+* @exports
+* @param {Function|Array} [baseClass|baseClassAndMixins] class (or class and mixins) to inherit from
+* @param {Object} prototypeFields
+* @param {Object} [staticFields]
+* @returns {Function} class
+*/
 function inherit() {
     var args = arguments,
         withMixins = isArray(args[0]),
@@ -109,7 +122,11 @@ function inherit() {
             function() {
                 return this.__constructor.apply(this, arguments);
             } :
-            function() {};
+            hasBase?
+                function() {
+                    return base.apply(this, arguments);
+                } :
+                function() {};
 
     if(!hasBase) {
         res.prototype = props;
@@ -118,6 +135,8 @@ function inherit() {
     }
 
     extend(res, base);
+
+    res.__parent = base;
 
     var basePtp = base.prototype,
         resPtp = res.prototype = objCreate(basePtp);
