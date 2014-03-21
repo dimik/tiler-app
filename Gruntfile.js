@@ -12,7 +12,7 @@ module.exports = function (grunt) {
                     '<%= tilerApp.app %>/js/lib/{,*/}*.js',
                     '<%= tilerApp.app %>/js/node_modules/{,*/}*.js',
                 ],
-                tasks: ['concat:all']
+                tasks: ['newer:jshint:concat:all']
             },
 
             gruntfile: {
@@ -40,6 +40,17 @@ module.exports = function (grunt) {
                 ],
                 dest: '<%= tilerApp.app %>/js/project.js'
             }
+        },
+
+        jshint: {
+            options: {
+                jshintrc: '.jshintrc',
+                reporter: require('jshint-stylish')
+            },
+            all: [
+                'Gruntfile.js',
+                '<%= tilerApp.app %>/js/lib/{,*/}*.js'
+            ]
         }
     });
 
@@ -62,4 +73,9 @@ module.exports = function (grunt) {
         grunt.log.warn('The `server` task has been deprecated. Use `grunt serve` to start a server.');
         grunt.task.run(['serve']);
     });
+
+    grunt.registerTask('default', [
+        'newer:jshint',
+        'build'
+    ]);
 };
