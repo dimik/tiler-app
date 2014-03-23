@@ -30,7 +30,7 @@ modules.define('app-state-image-load', [
         _onImageLoad: function (e) {
             var app = this._app;
 
-            app.getTileSource().open(URL.createObjectURL(e.source))
+            app.tiler.openSource(URL.createObjectURL(e.source))
                 .done(function (res) {
                     URL.revokeObjectURL(e.source);
                     app.setData({

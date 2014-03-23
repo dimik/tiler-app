@@ -93,7 +93,7 @@ modules.define('layer-tiler-image-source', [
         save: function (url, type) {
             var defer = vow.defer();
 
-            this._source.toBuffer(type || this._options.tileType, function (err, buf) {
+            this._source.toBuffer(type, function (err, buf) {
                 if(err) {
                     defer.reject(err);
                 }

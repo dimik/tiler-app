@@ -11,9 +11,9 @@ modules.define('ymaps-layout-layer-settings', [
                 '{% include options.imageStatusLayout %}',
 
                 '<div class="control-group">',
-                    '<label class="control-label" for="layerName">Название слоя</label>',
+                    '<label class="control-label" for="output">Название слоя</label>',
                     '<div class="controls">',
-                        '<input type="text" name="layerName" id="layerName" value="{{ data.layerName }}">',
+                        '<input type="text" name="output" id="output" value="{{ data.output }}">',
                     '</div>',
                 '</div>',
                 '<div class="control-group">',

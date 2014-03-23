@@ -20,7 +20,7 @@ modules.define('app-state-layer-process', [
             });
 
             app.tiler
-                .setTileSource(app.getTileSource())
+                .setOptions(app.getData())
                 .render()
                 .done(
                     this._onComplete,
@@ -47,9 +47,12 @@ modules.define('app-state-layer-process', [
         _onProgress: function (v) {
             this._app.preloader.render(v);
         },
-        _onError: function () {
+        _onError: function (err) {
+            var message = err.status + ' ' + err.statusText;
+
+            this._app.preloader.clear();
             this._app.popup.render({
-                content: err
+                content: message
             });
             this._changeState('layer-setup');
         },

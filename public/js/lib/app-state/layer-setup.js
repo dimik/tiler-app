@@ -14,9 +14,6 @@ modules.define('app-state-layer-setup', [
             var app = this._app;
 
             this._attachHandlers();
-            app.setData({
-                maxZoom: app.getTileSource().getZoomBySource()
-            });
             app.sidebar.render(app.getData());
             app.renderSourceLayer();
         },
@@ -41,13 +38,13 @@ modules.define('app-state-layer-setup', [
             var app = this._app,
                 settings = e.settings;
 
-            app.tiler.setOptions({ output: settings.layerName });
             app.setData({
-                tileBackground: settings.tileBackground,
+                output: settings.output,
+                tileColor: settings.tileColor,
                 minZoom: ~~settings.minZoom,
                 maxZoom: ~~settings.maxZoom,
                 tileType: settings.tileType,
-                tileOpacity: settings.tileOpacity / 100
+                // tileOpacity: settings.tileOpacity / 100
             });
         },
         _onSetupCancel: function (e) {

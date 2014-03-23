@@ -6,10 +6,10 @@ modules.define('ymaps-layout-tile-color', [
 
     var TileColorLayout = ymaps.templateLayoutFactory.createClass([
         '<div class="control-group">',
-            '<label class="control-label" for="tileBackground">Цвет фона тайла</label>',
+            '<label class="control-label" for="tileColor">Цвет фона тайла</label>',
             '<div class="controls">',
                 '<div class="input-append">',
-                    '<input class="input-medium" type="text" name="tileBackground" id="tileBackground" value="{{ data.tileBackground }}" placeholder="#FFFFFF, black, rgba(0,0,0,0.0)">',
+                    '<input class="input-medium" type="text" name="tileColor" id="tileColor" value="{{ data.tileColor }}" placeholder="#FFFFFF, black, rgba(0,0,0,0.0)">',
                     '<span class="add-on"><i></i></span>',
                 '</div>',
             '</div>',

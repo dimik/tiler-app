@@ -1,6 +1,8 @@
 modules.define('node-fs', [
     'yandex-disk-client'
-], function (provide, config, disk) {
+], function (provide, YandexDiskClient) {
+
+    var disk = new YandexDiskClient();
 
     provide({
         writeFile: function (path, buf, fn) {

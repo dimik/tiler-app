@@ -35,7 +35,7 @@ modules.define('layer-tiler-tile-source', [
 
             return tile
                 .setOpacity(options.tileOpacity)
-                .setFillStyle(options.tileBackground)
+                .setFillStyle(options.tileColor)
                 .draw(this._source.getElement(), sx, sy, sw, sh, tx, ty, tw, th);
         },
         getZoomBySource: function () {
@@ -170,7 +170,7 @@ modules.define('layer-tiler-tile-source', [
             return {
                 tileSize: 256,
                 tileType: 'image/png',
-                tileBackground: 'rgba(0,0,0,0.0)',
+                tileColor: 'rgba(0,0,0,0.0)',
                 tileOpacity: 1.0,
                 minZoom: 0
             };

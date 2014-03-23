@@ -10,13 +10,13 @@ modules.define('map-view-tile-source-layer', [
         },
         render: function (tileSource, options) {
             this._layer = this._createLayer(tileSource, options);
-            ymaps.layer.storage.add(options.layerName, this._layer);
+            ymaps.layer.storage.add(options.output, this._layer);
 
             this._mapType = this._createMapType(options);
-            ymaps.mapType.storage.add(options.layerName, this._mapType);
+            ymaps.mapType.storage.add(options.output, this._mapType);
 
             map.options.set('projection', this._createProjection());
-            map.setType(options.layerName);
+            map.setType(options.output);
             map.setCenter([0, 0], options.maxZoom);
 
             return this;
@@ -84,7 +84,7 @@ modules.define('map-view-tile-source-layer', [
             var layers = options.backgroundMapType?
                     ymaps.mapType.storage.get(options.backgroundMapType).getLayers() : [];
 
-            return new ymaps.MapType(options.layerName, layers.concat([options.layerName]));
+            return new ymaps.MapType(options.output, layers.concat([options.output]));
         }
     });
 

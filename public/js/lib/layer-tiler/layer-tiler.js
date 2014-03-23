@@ -98,10 +98,11 @@ modules.define('layer-tiler', [
          * @returns {vow.Promise} Promise A+.
          */
         renderTile: function (x, y, zoom) {
-            var defer = vow.defer();
+            var source = this._source,
+                defer = vow.defer();
 
-            this._source.getTile(x, y, zoom)
-                .save(this.getTileUrl(x, y, zoom))
+            source.getTile(x, y, zoom)
+                .save(this.getTileUrl(x, y, zoom), source.getOptions().tileType)
                 .done(function (res) {
                     defer.notify(util.format('rendering tile: zoom=%s, x=%s, y=%s', zoom, x, y));
                     defer.resolve(res);
@@ -175,11 +176,14 @@ modules.define('layer-tiler', [
 
             return util.format(options.tileUrlTemplate, options.output, zoom, x, y, tileType.replace('image/', ''));
         },
-        getOptons: function () {
-            return this._options;
+        getOptions: function () {
+            return extend({}, this._options, this._source.getOptions());
         },
         setOptions: function (options) {
-            extend(this._options, options);
+            extend(this._options, {
+                output: options.output
+            });
+            this._source.setOptions(options);
 
             return this;
         },
@@ -191,7 +195,7 @@ modules.define('layer-tiler', [
          */
         getDefaults: function () {
             return {
-                output: 'tiles',
+                output: 'tiles-' + Date.now(),
                 tileUrlTemplate: '%s/%s/%s-%s.%s'
             };
         }
