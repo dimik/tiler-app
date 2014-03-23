@@ -1,7 +1,4 @@
-( // Module boilerplate to support browser globals and AMD.
-    (typeof define === 'function' && function (m) { define('EventEmitter', m); }) ||
-    (function (m) { window.EventEmitter = m(); })
-)(function () {
+modules.define('node-events', function (provide) {
 
     'use strict';
 
@@ -70,15 +67,21 @@
             var events = this._events;
 
             if(events.hasOwnProperty(event)) {
-                var listeners = events[event], handler;
+                var listeners = events[event];
 
-                for(var i = 0, len = listeners.length; i < len; i++) {
-                    if((listeners[i].__listener || listeners[i]) === listener) {
-                        listeners.splice(i, 1);
-                        this.emit('removeListener', event, listener);
-                        break;
+                try {
+                    for(var i = 0, len = listeners.length; i < len; i++) {
+                        if((listeners[i].__listener || listeners[i]) === listener) {
+                            listeners.splice(i, 1);
+                            this.emit('removeListener', event, listener);
+                            break;
+                        }
                     }
                 }
+                catch(err) {
+                    onEmitterError(this, err);
+                }
+
                 if(!listeners.length) {
                     delete events[event];
                 }
@@ -146,19 +149,19 @@
             var args = Array.prototype.slice.call(arguments, 1),
                 events = this._events;
 
-            if(!(events.hasOwnProperty(event) && events[event].length)) {
+            if(!events.hasOwnProperty(event)) {
                 return false;
             }
 
-            var listeners = events[event], listener;
+            var listeners = events[event];
 
-            for(var i = 0, len = listeners.length; i < len; i++) {
-                if(listener = listeners[i]) {
-                    listener.apply(this, args);
+            try {
+                for(var i = 0, len = listeners.length; i < len; i++) {
+                    listeners[i].apply(this, args);
                 }
-                else {
-                    continue;
-                }
+            }
+            catch(err) {
+                onEmitterError(this, err);
             }
 
             return true;
@@ -190,7 +193,6 @@
             this._maxListeners = Math.abs(n);
         }
     };
-
     /**
      * Alias for the EventEmitter.addListener method.
      * Adds a listener to the end of the listeners array for the specified event.
@@ -213,7 +215,6 @@
         return listener?
             this.removeListener(event, listener) : this.removeAllListeners(event);
     };
-
     /**
      * Returns the number of listeners for a given event.
      * @function
@@ -227,6 +228,27 @@
         return emitter.listeners(event).length;
     };
 
-    return EventEmitter;
+    /**
+     * Helper for error processing.
+     * When an EventEmitter instance experiences an error, the typical action is to emit an 'error' event.
+     * If there is no listener for it, then the default action is to print a stack trace and exit the program.
+     * @function
+     * @private
+     * @name onEmitterError
+     * @param {EventEmitter} emitter
+     * @param {Error} err
+     */
+    function onEmitterError(emitter, err) {
+        if(EventEmitter.listenerCount(emitter, 'error')) {
+            emitter.emit('error', err);
+        }
+        else {
+            throw err;
+        }
+    }
+
+    provide({
+        EventEmitter: EventEmitter
+    });
 
 });

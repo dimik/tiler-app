@@ -1,9 +1,6 @@
-modules.define('fs', [
-    'app-config',
-    'jquery-yandex-disk'
-], function (provide, config, YaDisk) {
-
-    var disk = $.YaDisk({ token: config.token });
+modules.define('node-fs', [
+    'yandex-disk-client'
+], function (provide, config, disk) {
 
     provide({
         writeFile: function (path, buf, fn) {
