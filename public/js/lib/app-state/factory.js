@@ -1,4 +1,5 @@
 modules.define('app-state-factory', [
+    'inherit',
     'app-state-user-auth',
     'app-state-image-load',
     'app-state-layer-setup',

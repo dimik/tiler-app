@@ -1,6 +1,7 @@
 modules.define('ymaps-layout-tile-color', [
     'ymaps',
-    'jquery'
+    'jquery',
+    'bootstrap-colorpicker'
 ], function (provide, ymaps, jQuery) {
 
     var TileColorLayout = ymaps.templateLayoutFactory.createClass([

@@ -7,7 +7,7 @@ modules.define('app', [
     'map-view-layer-settings',
     'map-view-tile-source-layer',
     'layer-tiler',
-    'tile-source',
+    'layer-tiler-tile-source',
     'app-state-factory'
 ], function (provide, inherit, ymaps, PopupMapView, PreloaderMapView, ImageReaderMapView, LayerSettingsMapView, TileSourceLayerMapView, LayerTiler, TileSource, AppStateFactory) {
 

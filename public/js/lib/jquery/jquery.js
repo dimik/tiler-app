@@ -9077,7 +9077,7 @@ if ( typeof define === "function" && define.amd ) {
 // Rigister as a named ymaps module.
 if(typeof modules === 'object') {
     modules.define('jquery', function(provide) {
-        provide(vow);
+        provide(jQuery);
     });
 }
 
