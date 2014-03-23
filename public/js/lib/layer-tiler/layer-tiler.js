@@ -150,7 +150,7 @@ modules.define('layer-tiler', [
                             throw 'Операция отменена пользователем';
                         }
                         return handler().progress(defer.notify, defer);
-                    }, this))
+                    }, this));
 
                     return promises;
                 }.bind(this), [ vow.resolve() ])

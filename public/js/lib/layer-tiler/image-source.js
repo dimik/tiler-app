@@ -1,4 +1,4 @@
-maodules.define('layer-tiler-image-source', [
+modules.define('layer-tiler-image-source', [
     'inherit',
     'vow',
     'node-canvas',
