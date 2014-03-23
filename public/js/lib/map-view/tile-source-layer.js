@@ -60,14 +60,20 @@ modules.define('map-view-tile-source-layer', [
 
                 tileSource.events
                     .on('optionschange', function (e) {
-                        var options = tileSource.getOptions();
+                        var options = tileSource.getOptions(),
+                            minZoom = options.minZoom,
+                            maxZoom = options.maxZoom,
+                            oldMaxZoom = zoomRange[1];
 
-                        zoomRange[0] = options.minZoom;
-                        zoomRange[1] = options.maxZoom;
-                        tileType = options.tileType;
-
+                        zoomRange[0] = minZoom;
+                        zoomRange[1] = maxZoom;
                         layer.events.fire('zoomrangechange');
 
+                        if(oldMaxZoom > maxZoom && map.getZoom() > maxZoom) {
+                            map.setZoom(maxZoom);
+                        }
+
+                        tileType = options.tileType;
                         layer.update();
                     });
 
