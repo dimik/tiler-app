@@ -1,4 +1,5 @@
 modules.define('ymaps-map-config', function (provide) {
+
     provide({
         container: 'map',
         state: {

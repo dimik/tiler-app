@@ -10,54 +10,54 @@ modules.define('ymaps-control-centered', [
             '</div>'
         ].join(''));
 
-    provide(
-        inherit(BaseControl, {
-            __constructor: function () {
-                this.__base.apply(this, arguments);
+    var CenteredControl = inherit(BaseControl, {
+        __constructor: function () {
+            this.__base.apply(this, arguments);
 
-                this.options.set('contentLayout', ContentLayout);
-            },
-            _init: function (el) {
-                this.__base.apply(this, arguments);
+            this.options.set('contentLayout', ContentLayout);
+        },
+        _init: function (el) {
+            this.__base.apply(this, arguments);
 
-                this._setPosition();
-                this._attachHandlers();
-            },
-            _destroy: function () {
-                this._detachHandlers();
+            this._setPosition();
+            this._attachHandlers();
+        },
+        _destroy: function () {
+            this._detachHandlers();
 
-                this.__base.apply(this, arguments);
-            },
-            /**
-             * Устанавливает контролу опцию "position".
-             * @function
-             * @private
-             * @name CenteredControl._setPosition
-             * @param {Array} size Размер контейнера карты.
-             */
-            _setPosition: function () {
-                var size = this._map.container.getSize();
+            this.__base.apply(this, arguments);
+        },
+        /**
+         * Устанавливает контролу опцию "position".
+         * @function
+         * @private
+         * @name CenteredControl._setPosition
+         * @param {Array} size Размер контейнера карты.
+         */
+        _setPosition: function () {
+            var size = this._map.container.getSize();
 
-                this.options.set('position', {
-                    top: size[1] / 2 - this._element.offsetHeight / 2,
-                    left: size[0] / 2 - this._element.offsetWidth / 2
-                });
-            },
-            _attachHandlers: function () {
+            this.options.set('position', {
+                top: size[1] / 2 - this._element.offsetHeight / 2,
+                left: size[0] / 2 - this._element.offsetWidth / 2
+            });
+        },
+        _attachHandlers: function () {
+            this._map.container.events
+                .add('sizechange', this._setPosition, this);
+
+            // this.data.events.add('change', this._setPosition, this);
+
+        },
+        _detachHandlers: function () {
+            if(this._map) {
                 this._map.container.events
-                    .add('sizechange', this._setPosition, this);
+                    .remove('sizechange', this._setPosition, this);
 
-                // this.data.events.add('change', this._setPosition, this);
-
-            },
-            _detachHandlers: function () {
-                if(this._map) {
-                    this._map.container.events
-                        .remove('sizechange', this._setPosition, this);
-
-                    // this.data.events.remove('change', this._setPosition, this);
-                }
+                // this.data.events.remove('change', this._setPosition, this);
             }
-        })
-    );
+        }
+    });
+
+    provide(CenteredControl);
 });
