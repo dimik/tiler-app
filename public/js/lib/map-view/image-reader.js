@@ -2,21 +2,21 @@ modules.define([
     'inherit',
     'jquery',
     'ymaps',
+    'ymaps-map',
     'ymaps-control-centered',
     'ymaps-layout-image-loader'
-], function (provide, inherit, jQuery, ymaps, CenteredControl, ImageLoaderLayout) {
+], function (provide, inherit, jQuery, ymaps, map, CenteredControl, ImageLoaderLayout) {
 
     provide(
         inherit({
-            __constructor: function (map) {
+            __constructor: function () {
                 this.events = jQuery({});
-                this._map = map;
                 this._control = this._createControl();
                 this._source = null;
                 this._data = null;
             },
             render: function (data) {
-                this._map.controls.add(this._control);
+                map.controls.add(this._control);
                 this._attachHandlers();
 
                 if(data) {
@@ -28,7 +28,7 @@ modules.define([
             },
             clear: function () {
                 this._detachHandlers();
-                this._map.controls.remove(this._control);
+                map.controls.remove(this._control);
                 this._source = null;
                 this._data = null;
 
@@ -78,12 +78,12 @@ modules.define([
                     case 'image/png':
                     case 'image/jpeg':
                     case 'image/gif':
-                        this.events.trigger($.Event('load', {
+                        this.events.trigger(jQuery.Event('load', {
                             source: source
                         }));
                         break;
                     default:
-                        this.events.trigger($.Event('error', {
+                        this.events.trigger(jQuery.Event('error', {
                             message: source.type.indexOf('image/') === 0?
                                 'Формат изображения "<strong>' + source.type + '</strong>"<br/>не поддерживается данным приложением' :
                                 'Переданный файл не является изображением'
@@ -91,13 +91,13 @@ modules.define([
                 }
             },
             _onSubmit: function (e) {
-                this.events.trigger($.Event('submit', {
+                this.events.trigger(jQuery.Event('submit', {
                     source: this._source
                 }));
             },
             _onCancel: function (e) {
                 this._control.options.set('contentBodyLayout', ImageLoaderLayout);
-                this.events.trigger($.Event('cancel', {}));
+                this.events.trigger(jQuery.Event('cancel', {}));
             }
         })
     );

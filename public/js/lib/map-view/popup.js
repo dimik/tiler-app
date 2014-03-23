@@ -2,21 +2,21 @@ modules.define('map-view-popup', [
     'inherit',
     'jquery',
     'ymaps',
+    'ymaps-map',
     'ymaps-control-centered',
     'ymaps-layout-popup'
-], function (provide, inherit, jQuery, ymaps, CenteredControl, PopupLayout) {
+], function (provide, inherit, jQuery, ymaps, map, CenteredControl, PopupLayout) {
 
     provide(
         inherit({
-            __constructor: function (map) {
+            __constructor: function () {
                 this.events = jQuery({});
-                this._map = map;
                 this._control = this._createControl();
                 this._timeoutId == null;
                 this._data = null;
             },
             render: function (data) {
-                this._map.controls.add(this._control);
+                map.controls.add(this._control);
                 this._attachHandlers();
 
                 this._timeoutId = window.setTimeout(function () {
@@ -33,7 +33,7 @@ modules.define('map-view-popup', [
             },
             clear: function () {
                 this._detachHandlers();
-                this._map.controls.remove(this._control);
+                map.controls.remove(this._control);
                 this._data = null;
                 if(this._timeoutId) {
                     window.clearTimeout(this._timeoutId);

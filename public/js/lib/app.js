@@ -1,7 +1,6 @@
 modules.define('app', [
     'inherit',
     'ymaps',
-    'map-view',
     'map-view-popup',
     'map-view-preloader',
     'map-view-image-reader',
@@ -10,19 +9,17 @@ modules.define('app', [
     'layer-tiler',
     'tile-source',
     'app-state-factory'
-], function (provide, inherit, ymaps, MapView, PopupMapView, PreloaderMapView, ImageReaderMapView, LayerSettingsMapView, TileSourceLayerMapView, LayerTiler, TileSource, AppStateFactory) {
+], function (provide, inherit, ymaps, PopupMapView, PreloaderMapView, ImageReaderMapView, LayerSettingsMapView, TileSourceLayerMapView, LayerTiler, TileSource, AppStateFactory) {
     provide(
         inherit({
             __constructor: function () {
                 this._data = new ymaps.data.Manager(this.getDefaults());
 
-                var map = new MapView();
-
-                this.popup = new PopupMapView(map);
-                this.preloader = new PreloaderMapView(map);
-                this.reader = new ImageReaderMapView(map);
-                this.sidebar = new LayerSettingsMapView(map);
-                this._tileSourceLayer = new TileSourceLayerMapView(map);
+                this.popup = new PopupMapView();
+                this.preloader = new PreloaderMapView();
+                this.reader = new ImageReaderMapView();
+                this.sidebar = new LayerSettingsMapView();
+                this._tileSourceLayer = new TileSourceLayerMapView();
                 this.tiler = new LayerTiler();
                 this._tileSource = this._createTileSource();
                 this._stateFactory = new AppStateFactory(this);
@@ -40,9 +37,6 @@ modules.define('app', [
                 this._data.set(data);
 
                 return this;
-            },
-            getMap: function () {
-                return this._mapView.getMap();
             },
             getTileSource: function () {
                 return this._tileSource;

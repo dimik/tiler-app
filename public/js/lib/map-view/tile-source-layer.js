@@ -1,12 +1,12 @@
 modules.define('map-view-tile-source-layer', [
     'inherit',
-    'ymaps'
-], function (provide, inherit, ymaps) {
+    'ymaps',
+    'ymaps-map'
+], function (provide, inherit, ymaps, map) {
 
     provide(
         inherit({
-            __constructor: function (map) {
-                this._map = map;
+            __constructor: function () {
                 this._layer = null;
             },
             render: function (tileSource, options) {
@@ -16,14 +16,14 @@ modules.define('map-view-tile-source-layer', [
                 this._mapType = this._createMapType(options);
                 ymaps.mapType.storage.add(options.layerName, this._mapType);
 
-                this._map.options.set('projection', this._createProjection());
-                this._map.setType(options.layerName);
-                this._map.setCenter([0, 0], options.maxZoom);
+                map.options.set('projection', this._createProjection());
+                map.setType(options.layerName);
+                map.setCenter([0, 0], options.maxZoom);
 
                 return this;
             },
             clear: function () {
-                this._map.setType('yandex#map');
+                map.setType('yandex#map');
 
                 return this;
             },
@@ -31,8 +31,7 @@ modules.define('map-view-tile-source-layer', [
                 return new ymaps.projection.Cartesian([[-10, -10], [10, 10]], [false, false]);
             },
             _createLayer: function (tileSource, options) {
-                var map = this._map,
-                    zoomRange = [options.minZoom, options.maxZoom],
+                var zoomRange = [options.minZoom, options.maxZoom],
                     tileType = options.tileType;
 
                 return function () {

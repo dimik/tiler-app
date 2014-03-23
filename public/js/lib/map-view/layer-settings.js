@@ -2,18 +2,18 @@ modules.define('map-view-layer-settings', [
     'inherit',
     'jquery',
     'ymaps',
+    'ymaps-map',
     'ymaps-control-sidebar'
-], function (provide, inherit, jQuery, ymaps, SidebarControl) {
+], function (provide, inherit, jQuery, ymaps, map, SidebarControl) {
 
     provide(
         inherit({
-            __constructor: function (map) {
+            __constructor: function () {
                 this.events = jQuery({});
-                this._map = map;
                 this._control = this._createControl();
             },
             render: function (data) {
-                this._map.controls.add(this._control);
+                map.controls.add(this._control);
                 if(data) {
                     jQuery.extend(data, {
                         imageSize: this._formatImageSize(data.imageSize),
@@ -28,7 +28,7 @@ modules.define('map-view-layer-settings', [
             },
             clear: function () {
                 this._detachHandlers();
-                this._map.controls.remove(this._control);
+                map.controls.remove(this._control);
 
                 return this;
             },
