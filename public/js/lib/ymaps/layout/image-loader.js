@@ -69,7 +69,7 @@ modules.define('ymaps-layout-image-loader', [
             var isDropZone = this._isDropZone(e.target);
 
             this._getDropZone()
-                .removeClass('success error')
+                .removeClass('success error');
 
             if(isDropZone) {
                 this._fireEvent(e.originalEvent.dataTransfer.files[0]);
