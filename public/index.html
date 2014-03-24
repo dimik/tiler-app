@@ -7,8 +7,6 @@
     <link href="//yandex.st/bootstrap/2.3.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="http://mjolnic.github.io/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css" rel="stylesheet">
 
-    <script src="js/project.js"></script>
-
     <style type="text/css">
         html, body {
             height: 100%;
@@ -101,6 +99,13 @@
             height: 10%;
         }
     </style>
+
+    <script src="js/project.js"></script>
+    <script type="text/javascript">
+        modules.require(['app'], function (App) {
+            var app = new App();
+        });
+    </script>
 </head>
 <body>
     <div class="page container-fluid">
