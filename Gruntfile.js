@@ -1,5 +1,5 @@
 module.exports = function (grunt) {
-    require('load-grunt-tasks')(grunt);    
+    require('load-grunt-tasks')(grunt);
 
     grunt.initConfig({
         tilerApp: {
@@ -10,16 +10,15 @@ module.exports = function (grunt) {
             js: {
                 files: [
                     '<%= tilerApp.app %>/js/lib/**/*.js',
-                    '<%= tilerApp.app %>/js/node_modules/**/*.js',
                 ],
-                tasks: ['newer:jshint:concat:all']
+                tasks: ['jshint:all','concat']
             },
 
             gruntfile: {
                 files: ['Gruntfile.js']
             }
-        }, 
-
+        },
+/*
         connect: {
             options: {
                 port: 9000,
@@ -31,12 +30,12 @@ module.exports = function (grunt) {
                 }
             }
         },
-
+*/
         concat: {
             dist: {
                 src: [
+                    '<%= tilerApp.app %>/js/lib/modules/modules.js',
                     '<%= tilerApp.app %>/js/lib/**/*.js',
-                    '<%= tilerApp.app %>/js/node_modules/**/*.js',
                 ],
                 dest: '<%= tilerApp.app %>/js/project.js'
             }
@@ -60,13 +59,13 @@ module.exports = function (grunt) {
 
     grunt.registerTask('serve', function (target) {
         if (target == 'dist') {
-            return grunt.task.run(['build', 'connect:dist:keepalive']);
+            return grunt.task.run(['build'/*, 'connect:dist:keepalive'*/]);
         }
 
         grunt.task.run([
             'build',
-            'connect',
-            'watch'
+//            'connect',
+            'watch:js'
         ]);
     });
 
