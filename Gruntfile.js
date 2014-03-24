@@ -9,8 +9,8 @@ module.exports = function (grunt) {
         watch: {
             js: {
                 files: [
-                    '<%= tilerApp.app %>/js/lib/{,*/}*.js',
-                    '<%= tilerApp.app %>/js/node_modules/{,*/}*.js',
+                    '<%= tilerApp.app %>/js/lib/**/*.js',
+                    '<%= tilerApp.app %>/js/node_modules/**/*.js',
                 ],
                 tasks: ['newer:jshint:concat:all']
             },
@@ -35,8 +35,8 @@ module.exports = function (grunt) {
         concat: {
             dist: {
                 src: [
-                    '<%= tilerApp.app %>/js/lib/{,*/}*.js',
-                    '<%= tilerApp.app %>/js/node_modules/{,*/}*.js',
+                    '<%= tilerApp.app %>/js/lib/**/*.js',
+                    '<%= tilerApp.app %>/js/node_modules/**/*.js',
                 ],
                 dest: '<%= tilerApp.app %>/js/project.js'
             }
@@ -49,7 +49,7 @@ module.exports = function (grunt) {
             },
             all: [
                 'Gruntfile.js',
-                '<%= tilerApp.app %>/js/lib/{,*/}*.js'
+                '<%= tilerApp.app %>/js/lib/**/*.js'
             ]
         }
     });
@@ -64,6 +64,7 @@ module.exports = function (grunt) {
         }
 
         grunt.task.run([
+            'build',
             'connect',
             'watch'
         ]);
@@ -75,7 +76,7 @@ module.exports = function (grunt) {
     });
 
     grunt.registerTask('default', [
-        'newer:jshint',
+        'jshint:all',
         'build'
     ]);
 };

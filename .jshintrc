@@ -18,11 +18,17 @@
     "sub": true, 
     "supernew": true, 
     "browser": true,
+    "node": true, 
     "-W099": true,  
     "-W014": true,
     "-W041": true,
     "-W047": true,
     "-W008": true, 
     "-W017": true,
-    "-W018": true
+    "-W018": true,
+    "globals": {
+        "provide": true,
+        "modules": true,
+        "ymaps": true
+    }
 }
