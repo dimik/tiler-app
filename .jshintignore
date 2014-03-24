@@ -1,3 +1,5 @@
 public/js/lib/vow/*
 public/js/lib/jquery/*
+public/js/lib/node/*
 public/js/lib/inherit/*
+public/js/lib/bootstrap-colorpicker/*
