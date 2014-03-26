@@ -166,6 +166,12 @@ modules.define('layer-tiler-tile-source', [
             return (x >= offset[0] && x < tilesCountByWidth + offset[0]) &&
                 (y >= offset[1] && y < tilesCountByHeight + offset[1]);
         },
+        getMinZoom: function () {
+            return ~~this._options.minZoom;
+        },
+        getMaxZoom: function () {
+            return ~~this._options.maxZoom;
+        },
         getDefaults: function () {
             return {
                 tileSize: 256,
@@ -186,7 +192,7 @@ modules.define('layer-tiler-tile-source', [
      * @param {Object} source
      * @returns {Object} Aggregates all own enumerable properties of the source objects.
      */
-    function extend (target, source) {
+    function extend(target, source) {
         var slice = Array.prototype.slice,
             hasOwnProperty = Object.prototype.hasOwnProperty;
 

@@ -4,8 +4,9 @@ modules.define('layer-tiler', [
     'layer-tiler-tile-source',
     'node-util',
     'node-path',
-    'node-fs'
-], function (provide, inherit, vow, TileSource, util, path, fs) {
+    'node-fs',
+    'vow-queue'
+], function (provide, inherit, vow, TileSource, util, path, fs, Queue) {
 
     /**
      * User-Map-Layer Tiler Class.
@@ -21,7 +22,6 @@ modules.define('layer-tiler', [
         __constructor: function (options) {
             this._options = extend({}, this.getDefaults(), options);
             this._source = new TileSource(this._options);
-            this._state = null;
         },
         /**
          * Open source image.
@@ -41,49 +41,47 @@ modules.define('layer-tiler', [
          * @returns {vow.Promise} Promise A+.
          */
         render: function () {
-            var defer = vow.defer(),
-                options = this._options,
+            var options = this._options,
                 source = this._source,
-                sourceOptions = source.getOptions(),
-                minZoom = ~~sourceOptions.minZoom,
-                maxZoom = isFinite(sourceOptions.maxZoom)? ~~sourceOptions.maxZoom : source.getZoomBySource(),
-                handlers = [
-                    this._createFolder.bind(this, options.output)
-                ];
+                queue = this._queue = new Queue({ weightLimit : 10 }),
+                minZoom = source.getMinZoom(),
+                maxZoom = source.getMaxZoom(),
+                tasks = [],
+                enqueue = function (task, priority, weight) {
+                    tasks.push(queue.enqueue(task, { priority: priority, weight: weight }));
+                };
 
-            this._state = 'processing';
+            enqueue(this._createFolder.bind(this, options.output), 3, 10);
 
             for(var zoom = maxZoom; zoom >= minZoom; zoom--) {
                 var tilesCount = source.getTilesNumberAtZoom(zoom),
                     folderName = path.join(options.output, zoom.toString(10));
 
-                handlers.push(
-                    this._createFolder.bind(this, folderName)
-                );
+                enqueue(this._createFolder.bind(this, folderName), 2, 10);
 
                 for(var x = 0; x < tilesCount; x++) {
                     for(var y = 0; y < tilesCount; y++) {
                         if(source.isTileFound(x, y, zoom)) {
-                            handlers.push(
-                                this.renderTile.bind(this, x, y, zoom)
-                            );
+                            enqueue(this.renderTile.bind(this, x, y, zoom), 1, 2);
                         }
                     }
                 }
             }
 
-            var num = handlers.length;
+            queue.start();
 
-            this._resolveAllHandlers(handlers)
+            var num = tasks.length;
+
+            return vow.all(tasks)
                 .progress(function (message) {
-                    defer.notify({ message: message, progress: 100 - Math.floor(--num * 100 / handlers.length) });
-                })
-                .done(defer.resolve, defer.reject, defer);
-
-            return defer.promise();
+                    return {
+                        message: message,
+                        progress: 100 - Math.floor(--num * 100 / tasks.length)
+                    };
+                });
         },
         cancel: function () {
-            this._state = 'cancelled';
+            this._queue.stop();
         },
         getTileSource: function () {
             return this._source;
@@ -104,6 +102,7 @@ modules.define('layer-tiler', [
             source.getTile(x, y, zoom)
                 .save(this.getTileUrl(x, y, zoom), source.getOptions().tileType)
                 .done(function (res) {
+                console.log('saving');
                     defer.notify(util.format('rendering tile: zoom=%s, x=%s, y=%s', zoom, x, y));
                     defer.resolve(res);
                 });
@@ -130,35 +129,6 @@ modules.define('layer-tiler', [
                     defer.resolve();
                 }
             });
-
-            return defer.promise();
-        },
-        /**
-         * Process handlers in sequence.
-         * @function
-         * @private
-         * @name LayerTiler._resolveAllHandlers
-         * @param {Array} handlers List of the handlers.
-         * @returns {vow.Promise} Promise A+
-         */
-        _resolveAllHandlers: function (handlers) {
-            var defer = vow.defer();
-
-            vow.all(
-                handlers.reduce(function (promises, handler, index) {
-                    promises.push(promises[index].then(function () {
-                        if(this._state === 'cancelled') {
-                            throw 'Операция отменена пользователем';
-                        }
-                        return handler().progress(defer.notify, defer);
-                    }, this));
-
-                    return promises;
-                }.bind(this), [ vow.resolve() ])
-            )
-            .done(function (results) {
-                defer.resolve(results.slice(1));
-            }, defer.reject, defer);
 
             return defer.promise();
         },
