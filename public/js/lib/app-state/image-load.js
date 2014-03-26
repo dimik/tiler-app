@@ -1,8 +1,9 @@
 modules.define('app-state-image-load', [
     'inherit',
     'jquery',
-    'app-state-base'
-], function (provide, inherit, jQuery, AppStateBase) {
+    'app-state-base',
+    'yandex-fotki-client'
+], function (provide, inherit, jQuery, AppStateBase, YandexFotkiClient) {
 
     var ImageLoadState = inherit(AppStateBase, {
         __constructor: function () {
@@ -21,7 +22,8 @@ modules.define('app-state-image-load', [
         _attachHandlers: function () {
             this._app.reader.events.on({
                 load: jQuery.proxy(this._onImageLoad, this),
-                error: jQuery.proxy(this._onImageError, this)
+                error: jQuery.proxy(this._onImageError, this),
+                fotkiselect: jQuery.proxy(this._onFotkiSelect, this)
             });
         },
         _detachHandlers: function () {
@@ -57,6 +59,16 @@ modules.define('app-state-image-load', [
                     .on('cancel', function () {
                         app.reader.render();
                     });
+        },
+        _onFotkiSelect: function () {
+            var client = new YandexFotkiClient();
+
+            client.request('stat')
+                .then(function (res) {
+                    debugger;
+                }, function (err) {
+                    debugger;
+                });
         }
     });
 

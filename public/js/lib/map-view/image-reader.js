@@ -62,10 +62,12 @@ modules.define('map-view-image-reader', [
             this._control.events
                 .add('load', this._onLoad, this)
                 .add('submit', this._onSubmit, this)
-                .add('cancel', this._onCancel, this);
+                .add('cancel', this._onCancel, this)
+                .add('fotkiselect', this._onFotkiSelect, this);
         },
         _detachHandlers: function () {
             this._control.events
+                .remove('fotkiselect', this._onFotkiSelect, this)
                 .remove('cancel', this._onCancel, this)
                 .remove('submit', this._onSubmit, this)
                 .remove('load', this._onLoad, this);
@@ -97,6 +99,9 @@ modules.define('map-view-image-reader', [
         _onCancel: function (e) {
             this._control.options.set('contentBodyLayout', ImageLoaderLayout);
             this.events.trigger(jQuery.Event('cancel', {}));
+        },
+        _onFotkiSelect: function () {
+            this.events.trigger(jQuery.Event('fotkiselect'));
         }
     });
 

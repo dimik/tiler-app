@@ -41,8 +41,14 @@ modules.define('ymaps-layout-image-loader', [
                 .on('dragover', jQuery.proxy(this._onDragOver, this))
                 .on('drop', jQuery.proxy(this._onDrop, this))
                 .on('change', ':file', jQuery.proxy(this._onFile, this));
+
+            this._$element
+                .on('click', '.btn-success', jQuery.proxy(this._onFotkiSelect, this));
         },
         _detachHandlers: function () {
+            this._$element
+                .off('click', '.btn-success');
+
             jQuery(document)
                 .off('dragover')
                 .off('drop')
@@ -79,6 +85,15 @@ modules.define('ymaps-layout-image-loader', [
         },
         _onFile: function (e) {
             return this._fireEvent(e.target.files[0]);
+        },
+        _onFotkiSelect: function (e) {
+            e.preventDefault();
+
+            var control = this.getData().control;
+
+            control.events.fire('fotkiselect', {
+                target: control
+            });
         },
         _fireEvent: function (file) {
             var control = this.getData().control;

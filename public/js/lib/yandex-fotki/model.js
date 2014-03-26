@@ -5,31 +5,10 @@ modules.define('yandex-fotki-model', [
 ], function (provide, inherit, jQuery, config) {
 
     var Model = inherit({
-        __constructor: function (token) {
-            this._token = token;
-            this._methods = [ 'get', 'getTags' ];
-        },
-        get: function () {
+        stat: function () {
             return this._send({
-                url: this.getUrl('/app/me/'),
+                url: this.getUrl('/api/me/'),
                 type: 'GET',
-                beforeSend: function (xhr) {
-                    xhr.overrideMimeType('text/plain; charset=x-user-defined');
-                    // xhr.responseType = 'blob';
-                },
-                headers: this.getHeaders()
-            });
-        },
-        getPreview: function (options) {
-            return this._send({
-                url: this.getUrl(options.path + '?preview'),
-                type: 'GET',
-                data: {
-                    size: options.size || 'M'
-                },
-                beforeSend: function (xhr) {
-                    xhr.overrideMimeType('text/plain; charset=x-user-defined');
-                },
                 headers: this.getHeaders()
             });
         },
@@ -41,7 +20,7 @@ modules.define('yandex-fotki-model', [
         getHeaders: function (headers) {
             return jQuery.extend({
                 Accept: 'application/json',
-                Authorization: 'OAuth ' + this._token
+                Authorization: 'OAuth ' + config.token
             }, headers);
         },
         isMethod: function (name) {
