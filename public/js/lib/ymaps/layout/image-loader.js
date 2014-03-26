@@ -12,16 +12,16 @@ modules.define('ymaps-layout-image-loader', [
             '</div>',
             '<div class="row-fluid">',
                 '<div class="file-control-group">',
-                    '<a class="btn btn-info" href="javascript:void(0);">',
+                    '<a class="btn btn-info" href="#">',
                         '<i class="icon-folder-open icon-white"></i>',
                         '&nbsp;Выбрать&nbsp;файл',
-                        '<input type="file" class="input-file-hidden" name="image-file" size="40">',
                     '</a>',
                 '</div>',
                 '<div class="ya-fotki-control-group">',
-                    '<a class="btn btn-success" href="javascript:void(0);">Выбрать&nbsp;на&nbsp;Яндекс.Фотках</a>',
+                    '<a class="btn btn-success" href="#">Выбрать&nbsp;на&nbsp;Яндекс.Фотках</a>',
                 '</div>',
             '</div>',
+            '<input type="file" class="input-file-hidden" name="image-file"></input>',
         '</div>'
     ].join(''), {
         build: function () {
@@ -43,10 +43,12 @@ modules.define('ymaps-layout-image-loader', [
                 .on('change', ':file', jQuery.proxy(this._onFile, this));
 
             this._$element
-                .on('click', '.btn-success', jQuery.proxy(this._onFotkiSelect, this));
+                .on('click', '.btn-info', jQuery.proxy(this._onFileBtnClick, this))
+                .on('click', '.btn-success', jQuery.proxy(this._onFotkiBtnClick, this));
         },
         _detachHandlers: function () {
             this._$element
+                .off('click', '.btn-info')
                 .off('click', '.btn-success');
 
             jQuery(document)
@@ -86,7 +88,7 @@ modules.define('ymaps-layout-image-loader', [
         _onFile: function (e) {
             return this._fireEvent(e.target.files[0]);
         },
-        _onFotkiSelect: function (e) {
+        _onFotkiBtnClick: function (e) {
             e.preventDefault();
 
             var control = this.getData().control;
@@ -94,6 +96,12 @@ modules.define('ymaps-layout-image-loader', [
             control.events.fire('fotkiselect', {
                 target: control
             });
+        },
+        _onFileBtnClick: function (e) {
+            e.preventDefault();
+
+            this._$element.find(':file')
+                .trigger('click');
         },
         _fireEvent: function (file) {
             var control = this.getData().control;
