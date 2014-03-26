@@ -34,7 +34,10 @@ module.exports = function (grunt) {
         concat: {
             dist: {
                 src: [
-                    '<%= tilerApp.app %>/js/lib/modules/modules.js',
+                    '<%= tilerApp.app %>/js/node_modules/ym/modules.js',
+                    '<%= tilerApp.app %>/js/node_modules/vow/lib/vow.js',
+                    '<%= tilerApp.app %>/js/node_modules/vow-queue/lib/vow-queue.js',
+                    '<%= tilerApp.app %>/js/node_modules/inherit/lib/inherit.js',
                     '<%= tilerApp.app %>/js/lib/**/*.js',
                 ],
                 dest: '<%= tilerApp.app %>/js/project.js'
