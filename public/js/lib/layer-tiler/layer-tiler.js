@@ -49,6 +49,9 @@ modules.define('layer-tiler', [
                 tasks = [],
                 enqueue = function (task, priority, weight) {
                     tasks.push(queue.enqueue(task, { priority: priority, weight: weight }));
+                },
+                getProgress = function (num) {
+                    return Math.round(num * 100 / tasks.length);
                 };
 
             enqueue(this._createFolder.bind(this, options.output), 3, 10);
@@ -70,13 +73,14 @@ modules.define('layer-tiler', [
 
             queue.start();
 
-            var num = tasks.length;
-
             return vow.all(tasks)
                 .progress(function (message) {
+                    var stats = queue.getStats();
+
                     return {
                         message: message,
-                        progress: 100 - Math.floor(--num * 100 / tasks.length)
+                        processed: getProgress(stats.processedTasksCount),
+                        processing: getProgress(stats.processingTasksCount)
                     };
                 });
         },
@@ -102,7 +106,6 @@ modules.define('layer-tiler', [
             source.getTile(x, y, zoom)
                 .save(this.getTileUrl(x, y, zoom), source.getOptions().tileType)
                 .done(function (res) {
-                console.log('saving');
                     defer.notify(util.format('rendering tile: zoom=%s, x=%s, y=%s', zoom, x, y));
                     defer.resolve(res);
                 });

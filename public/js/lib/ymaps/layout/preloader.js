@@ -6,7 +6,8 @@ modules.define('ymaps-layout-preloader', [
         '<div class="well preloader">',
             '<p>{{ data.message }}</p>',
             '<div class="progress progress-striped active">',
-                '<div class="bar" style="width:{{ data.progress }}%;"></div>',
+                '<div class="bar" style="width:{{ data.processed }}%;"></div>',
+                '<div class="bar bar-danger" style="width:{{ data.processing }}%;"></div>',
             '</div>',
         '</div>'
     ].join(''));
