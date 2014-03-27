@@ -65,7 +65,7 @@ modules.define('layer-tiler', [
                 for(var x = 0; x < tilesCount; x++) {
                     for(var y = 0; y < tilesCount; y++) {
                         if(source.isTileFound(x, y, zoom)) {
-                            enqueue(this.renderTile.bind(this, x, y, zoom), 1, 2);
+                            enqueue(this.renderTile.bind(this, x, y, zoom), 1, 1);
                         }
                     }
                 }
