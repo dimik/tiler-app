@@ -58,6 +58,17 @@ modules.define('ymaps-control-base', [
         getParent: function () {
             return this._parent;
         },
+
+        /**
+         * Возвращает ссылку на карту.
+         * @function
+         * @name BaseControl.getMap
+         * @returns {Map} Ссылка на карту.
+         */
+        getMap: function () {
+            return this._map;
+        },
+
         _init: function (el) {
             this._map = this._parent.getMap();
             this._layout.setParentElement(
