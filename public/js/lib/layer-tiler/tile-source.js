@@ -3,8 +3,8 @@ modules.define('layer-tiler-tile-source', [
     'layer-tiler-image-source',
     'layer-tiler-tile',
     'node-canvas',
-    'node-events',
-], function (provide, inherit, ImageSource, Tile, Canvas, events) {
+    'tile-config',
+], function (provide, inherit, ImageSource, Tile, Canvas, config) {
 
     /**
      * @class
@@ -15,31 +15,30 @@ modules.define('layer-tiler-tile-source', [
         /**
          * @constructor
          */
-        __constructor: function (options) {
+        __constructor: function () {
             this.__base.apply(this, arguments);
 
-            this._options = extend({}, this.getDefaults(), options);
-            this.events = new events.EventEmitter();
+            this._minZoom = 0;
+            this._maxZoom = 0;
+            this.options = config;
         },
         open: function () {
             var promise = this.__base.apply(this, arguments);
 
             return promise.then(function (res) {
-                this._options.maxZoom = this.getZoomBySource();
+                this.setMaxZoom(this.getZoomBySource());
 
                 return res;
             }, this);
         },
         cropTo: function (tile, sx, sy, sw, sh, tx, ty, tw, th) {
-            var options = this._options;
-
             return tile
-                .setOpacity(options.tileOpacity)
-                .setFillStyle(options.tileColor)
+                .setOpacity(config.get('opacity'))
+                .setFillStyle(config.get('color'))
                 .draw(this._source.getElement(), sx, sy, sw, sh, tx, ty, tw, th);
         },
         getZoomBySource: function () {
-            var tileSize = this._options.tileSize,
+            var tileSize = config.get('size'),
                 log2 = function (n) {
                     return Math.log(n) / Math.log(2);
                 },
@@ -57,7 +56,7 @@ modules.define('layer-tiler-tile-source', [
                 return null;
             }
 
-            var tileSize = this._options.tileSize,
+            var tileSize = config.get('size'),
                 globalPixelPoint = [ x * tileSize, y * tileSize ],
                 topLeft = this.fromGlobalPixels(
                     globalPixelPoint,
@@ -87,17 +86,6 @@ modules.define('layer-tiler-tile-source', [
                 offset[1]
             );
         },
-        getOptions: function () {
-            return this._options;
-        },
-        setOptions: function (options) {
-            this.events.emit('optionschange', {
-                target: this,
-                options: extend(this._options, options)
-            });
-
-            return this;
-        },
         toLocalPixels: function (point, zoom) {
             var sZoom = this.getZoomBySource(),
                 getSizeAtZoom = function (size) {
@@ -123,7 +111,7 @@ modules.define('layer-tiler-tile-source', [
         fromGlobalPixels: function (globalPixelPoint, zoom) {
             var size = this.getSourceSizeAtZoom(zoom),
                 width = size[0], height = size[1],
-                tileSize = this._options.tileSize,
+                tileSize = config.get('size'),
                 tilesCount = this.getTilesNumberAtZoom(zoom),
                 pixelsCount = tilesCount * tileSize,
                 offset = [
@@ -152,7 +140,7 @@ modules.define('layer-tiler-tile-source', [
             return Math.pow(2, zoom);
         },
         isTileFound: function (x, y, zoom) {
-            var tileSize = this._options.tileSize,
+            var tileSize = config.get('size'),
                 tilesCount = this.getTilesNumberAtZoom(zoom),
                 size = this.getSourceSizeAtZoom(zoom),
                 width = size[0], height = size[1],
@@ -167,43 +155,18 @@ modules.define('layer-tiler-tile-source', [
                 (y >= offset[1] && y < tilesCountByHeight + offset[1]);
         },
         getMinZoom: function () {
-            return ~~this._options.minZoom;
+            return this._minZoom;
+        },
+        setMinZoom: function (minZoom) {
+            this._minZoom = ~~minZoom;
         },
         getMaxZoom: function () {
-            return ~~this._options.maxZoom;
+            return this._maxZoom;
         },
-        getDefaults: function () {
-            return {
-                tileSize: 256,
-                tileType: 'image/png',
-                tileColor: 'rgba(0,0,0,0.0)',
-                tileOpacity: 1.0,
-                minZoom: 0
-            };
+        setMaxZoom: function (maxZoom) {
+            this._maxZoom = ~~maxZoom;
         }
     });
-
-    /**
-     * Extends target object with properties of one or more source objects.
-     * @function
-     * @private
-     * @name extend
-     * @param {Object} target
-     * @param {Object} source
-     * @returns {Object} Aggregates all own enumerable properties of the source objects.
-     */
-    function extend(target, source) {
-        var slice = Array.prototype.slice,
-            hasOwnProperty = Object.prototype.hasOwnProperty;
-
-        slice.call(arguments, 1).forEach(function (o) {
-            for(var key in o) {
-                hasOwnProperty.call(o, key) && (target[key] = o[key]);
-            }
-        });
-
-        return target;
-    }
 
     provide(TileSource);
 });

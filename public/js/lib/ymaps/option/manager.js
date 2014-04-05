@@ -1,4 +1,4 @@
-modules.define('ymaps-option.manager', [
+modules.define('ymaps-option-manager', [
     'ymaps',
     'ymaps-option-mapper'
 ], function (provide, ymaps, mapper) {

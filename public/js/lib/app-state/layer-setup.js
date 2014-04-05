@@ -14,7 +14,7 @@ modules.define('app-state-layer-setup', [
             var app = this._app;
 
             this._attachHandlers();
-            app.sidebar.render(app.getData());
+            app.sidebar.render(app.options.getAll());
             app.renderSourceLayer();
         },
         destroy: function () {
@@ -35,17 +35,7 @@ modules.define('app-state-layer-setup', [
             this._changeState('layer-process');
         },
         _onSetupChange: function (e) {
-            var app = this._app,
-                settings = e.settings;
-
-            app.setData({
-                output: settings.output,
-                tileColor: settings.tileColor,
-                minZoom: ~~settings.minZoom,
-                maxZoom: ~~settings.maxZoom,
-                tileType: settings.tileType,
-                // tileOpacity: settings.tileOpacity / 100
-            });
+            this._app.options.set(e.settings);
         },
         _onSetupCancel: function (e) {
             this._changeState('image-load');

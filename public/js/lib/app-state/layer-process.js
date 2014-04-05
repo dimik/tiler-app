@@ -20,7 +20,6 @@ modules.define('app-state-layer-process', [
             });
 
             app.tiler
-                .setOptions(app.getData())
                 .render()
                 .done(
                     this._onComplete,
@@ -48,7 +47,8 @@ modules.define('app-state-layer-process', [
             this._app.preloader.render(v);
         },
         _onError: function (err) {
-            var message = err.status + ' ' + err.statusText;
+            var message = err.status?
+                err.status + ' ' + err.statusText : err.message;
 
             this._app.preloader.clear();
             this._app.popup.render({

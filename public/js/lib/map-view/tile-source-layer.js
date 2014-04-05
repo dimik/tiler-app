@@ -1,23 +1,24 @@
 modules.define('map-view-tile-source-layer', [
     'inherit',
     'ymaps',
-    'ymaps-map'
-], function (provide, inherit, ymaps, map) {
+    'ymaps-map',
+    'app-config'
+], function (provide, inherit, ymaps, map, config) {
 
     var TileSourceLayerMapView = inherit({
         __constructor: function () {
             this._layer = null;
         },
-        render: function (tileSource, options) {
-            this._layer = this._createLayer(tileSource, options);
-            ymaps.layer.storage.add(options.output, this._layer);
+        render: function (tileSource) {
+            this._layer = this._createLayer(tileSource);
+            ymaps.layer.storage.add(config.get('tilerOutput'), this._layer);
 
-            this._mapType = this._createMapType(options);
-            ymaps.mapType.storage.add(options.output, this._mapType);
+            this._mapType = this._createMapType();
+            ymaps.mapType.storage.add(config.get('tilerOutput'), this._mapType);
 
             map.options.set('projection', this._createProjection());
-            map.setType(options.output);
-            map.setCenter([0, 0], options.maxZoom);
+            map.setType(config.get('tilerOutput'));
+            map.setCenter([0, 0], tileSource.getMaxZoom());
 
             return this;
         },
@@ -29,9 +30,7 @@ modules.define('map-view-tile-source-layer', [
         _createProjection: function () {
             return new ymaps.projection.Cartesian([[-10, -10], [10, 10]], [false, false]);
         },
-        _createLayer: function (tileSource, options) {
-            var zoomRange = [options.minZoom, options.maxZoom],
-                tileType = options.tileType;
+        _createLayer: function (tileSource) {
 
             return function () {
                 var layer = new ymaps.Layer('');
@@ -43,7 +42,7 @@ modules.define('map-view-tile-source-layer', [
                         var tile = tileSource.getTile(tileNumber[0], tileNumber[1], tileZoom);
 
                         if(tile) {
-                            return tile.toDataURL(tileType);
+                            return tile.toDataURL(config.get('tileType'));
                         }
                     }
 
@@ -53,38 +52,43 @@ modules.define('map-view-tile-source-layer', [
                 layer.getZoomRange = function () {
                     var defer = new ymaps.vow.Deferred();
 
-                    defer.resolve(zoomRange);
+                    defer.resolve([tileSource.getMinZoom(), tileSource.getMaxZoom()]);
 
                     return defer.promise();
                 };
 
-                tileSource.events
-                    .on('optionschange', function (e) {
-                        var options = tileSource.getOptions(),
-                            minZoom = options.minZoom,
-                            maxZoom = options.maxZoom,
-                            oldMaxZoom = zoomRange[1];
+                var monitor = new ymaps.Monitor(config);
+                var sourceMonitor = new ymaps.Monitor(tileSource.options);
 
-                        zoomRange[0] = minZoom;
-                        zoomRange[1] = maxZoom;
+                sourceMonitor.add(['type', 'color'], function () {
+                    console.log('!!!!', arguments);
+                });
+
+                monitor
+                    .add(['layerMinZoom', 'layerMaxZoom'], function () {
+                        console.log('zoomrangechange', arguments);
                         layer.events.fire('zoomrangechange');
-
+                        layer.update();
+                        /*
                         if(oldMaxZoom > maxZoom && map.getZoom() > maxZoom) {
                             map.setZoom(maxZoom);
                         }
-
-                        tileType = options.tileType;
+                        */
+                    })
+                    .add(['tileType', 'tileColor'], function () {
+                        console.log('tiles options change', arguments);
                         layer.update();
                     });
+
 
                 return layer;
             };
         },
-        _createMapType: function (options) {
-            var layers = options.backgroundMapType?
-                    ymaps.mapType.storage.get(options.backgroundMapType).getLayers() : [];
+        _createMapType: function () {
+            var layers = /*options.backgroundMapType?
+                    ymaps.mapType.storage.get(options.backgroundMapType).getLayers() : */[];
 
-            return new ymaps.MapType(options.output, layers.concat([options.output]));
+            return new ymaps.MapType(config.get('tilerOutput'), layers.concat([config.get('tilerOutput')]));
         }
     });
 

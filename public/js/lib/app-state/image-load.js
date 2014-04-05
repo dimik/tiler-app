@@ -30,19 +30,22 @@ modules.define('app-state-image-load', [
             this._app.reader.events.off();
         },
         _onImageLoad: function (e) {
-            var app = this._app;
+            var app = this._app,
+                tileSource = app.tiler.getTileSource();
 
             app.tiler.openSource(URL.createObjectURL(e.source))
                 .done(function (res) {
                     URL.revokeObjectURL(e.source);
-                    app.setData({
+                    app.options.set({
                         imageUrl: res.src,
                         imageName: e.source.name,
                         imageType: e.source.type,
                         imageSize: e.source.size,
                         imageWidth: res.width,
                         imageHeight: res.height,
-                        tileType: e.source.type
+                        tileType: e.source.type,
+                        layerMinZoom: tileSource.getMinZoom(),
+                        layerMaxZoom: tileSource.getMaxZoom()
                     });
                     this._changeState('layer-setup');
                 }, this);

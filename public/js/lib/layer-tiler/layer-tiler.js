@@ -5,8 +5,9 @@ modules.define('layer-tiler', [
     'node-util',
     'node-path',
     'node-fs',
-    'vow-queue'
-], function (provide, inherit, vow, TileSource, util, path, fs, Queue) {
+    'vow-queue',
+    'layer-tiler-config'
+], function (provide, inherit, vow, TileSource, util, path, fs, Queue, config) {
 
     /**
      * User-Map-Layer Tiler Class.
@@ -17,11 +18,9 @@ modules.define('layer-tiler', [
     var LayerTiler = inherit(/** @lends LayerTiler prototype. */ {
         /**
          * @constructor
-         * @param {Object} options LayerTiler options.
          */
-        __constructor: function (options) {
-            this._options = extend({}, this.getDefaults(), options);
-            this._source = new TileSource(this._options);
+        __constructor: function () {
+            this._source = new TileSource();
         },
         /**
          * Open source image.
@@ -41,11 +40,11 @@ modules.define('layer-tiler', [
          * @returns {vow.Promise} Promise A+.
          */
         render: function () {
-            var options = this._options,
+            var queue = this._queue = new Queue({ weightLimit : 10 }),
                 source = this._source,
-                queue = this._queue = new Queue({ weightLimit : 10 }),
                 minZoom = source.getMinZoom(),
                 maxZoom = source.getMaxZoom(),
+                output = config.get('output'),
                 tasks = [],
                 enqueue = function (task, priority, weight) {
                     tasks.push(queue.enqueue(task, { priority: priority, weight: weight }));
@@ -54,11 +53,11 @@ modules.define('layer-tiler', [
                     return Math.round(num * 100 / tasks.length);
                 };
 
-            enqueue(this._createFolder.bind(this, options.output), 3, 10);
+            enqueue(this._createFolder.bind(output), 3, 10);
 
             for(var zoom = maxZoom; zoom >= minZoom; zoom--) {
                 var tilesCount = source.getTilesNumberAtZoom(zoom),
-                    folderName = path.join(options.output, zoom.toString(10));
+                    folderName = path.join(output, zoom.toString(10));
 
                 enqueue(this._createFolder.bind(this, folderName), 2, 10);
 
@@ -104,7 +103,7 @@ modules.define('layer-tiler', [
                 defer = vow.defer();
 
             source.getTile(x, y, zoom)
-                .save(this.getTileUrl(x, y, zoom), source.getOptions().tileType)
+                .save(config.get('output'), x, y, zoom)
                 .done(function (res) {
                     defer.notify(util.format('rendering tile: zoom=%s, x=%s, y=%s', zoom, x, y));
                     defer.resolve(res);
@@ -134,67 +133,8 @@ modules.define('layer-tiler', [
             });
 
             return defer.promise();
-        },
-        /**
-         * @function
-         * @name LayerTiler.getTileUrl
-         * @param {Number} x Tile coordinate by X.
-         * @param {Number} y Tile coordinate by Y.
-         * @param {Number} zoom
-         * @return {String} Tile path and name.
-         */
-        getTileUrl: function (x, y, zoom) {
-            var options = this._options,
-                tileType = this._source.getOptions().tileType;
-
-            return util.format(options.tileUrlTemplate, options.output, zoom, x, y, tileType.replace('image/', ''));
-        },
-        getOptions: function () {
-            return extend({}, this._options, this._source.getOptions());
-        },
-        setOptions: function (options) {
-            extend(this._options, {
-                output: options.output
-            });
-            this._source.setOptions(options);
-
-            return this;
-        },
-        /**
-         * Default options.
-         * @function
-         * @name LayerTiler.getDefaults
-         * @returns {Object} Options.
-         */
-        getDefaults: function () {
-            return {
-                output: 'tiles-' + Date.now(),
-                tileUrlTemplate: '%s/%s/%s-%s.%s'
-            };
         }
     });
-
-    /**
-     * Extends target object with properties of one or more source objects.
-     * @function
-     * @private
-     * @name extend
-     * @param {Object} target
-     * @param {Object} source
-     * @returns {Object} Aggregates all own enumerable properties of the source objects.
-     */
-    function extend (target, source) {
-        var slice = Array.prototype.slice,
-            hasOwnProperty = Object.prototype.hasOwnProperty;
-
-        slice.call(arguments, 1).forEach(function (o) {
-            for(var key in o) {
-                hasOwnProperty.call(o, key) && (target[key] = o[key]);
-            }
-        });
-
-        return target;
-    }
 
     provide(LayerTiler);
 });

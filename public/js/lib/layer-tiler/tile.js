@@ -3,8 +3,10 @@ modules.define('layer-tiler-tile', [
     'vow',
     'layer-tiler-image-source',
     'node-canvas',
-    'node-fs'
-], function (provide, inherit, vow, ImageSource, Canvas, fs) {
+    'node-util',
+    'node-fs',
+    'tile-config'
+], function (provide, inherit, vow, ImageSource, Canvas, util, fs, config) {
 
     /**
      * @class
@@ -29,25 +31,11 @@ modules.define('layer-tiler-tile', [
          * @param {String} [type="png"] Type of the image "png" or "jpg".
          * @returns {vow.Promise} Promise A+.
          */
-        save: function (url, type) {
-            //if(type == null || type == 'png') {
-                return this.__base.apply(this, arguments);
-            //}
+        save: function (path, x, y, zoom) {
+            var tileType = config.get('type'),
+                url = util.format(config.get('urlTemplate'), path, zoom, x, y, tileType.replace('image/', ''));
 
-            /**
-             * If type is "jpg".
-            var defer = vow.defer(),
-                out = fs.createWriteStream(url),
-                stream = this._source.createJPGStream(
-                    this.getDefaults()
-                );
-
-            out.once('finish', defer.resolve);
-
-            stream.pipe(out);
-
-            return defer.promise();
-             */
+            return this.__base.call(this, url, tileType);
         },
         resize: function (size) {
             var canvas = new Canvas(size, size),
@@ -93,19 +81,6 @@ modules.define('layer-tiler-tile', [
         },
         toDataURL: function (type) {
             return this.getSource().getElement().toDataURL(type);
-        },
-        /**
-         * Default options.
-         * @function
-         * @name Tile.getDefaults
-         * @returns {Object} Options.
-         */
-        getDefaults: function () {
-            return {
-                bufsize: 2048,
-                quality: 80,
-                progressive: false
-            };
         }
     });
 
