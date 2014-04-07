@@ -1,13 +1,50 @@
 modules.define('yandex-fotki-model', [
     'inherit',
     'jquery',
+    'vow',
+    'node-url',
     'yandex-fotki-config'
-], function (provide, inherit, jQuery, config) {
+], function (provide, inherit, jQuery, vow, url, config) {
 
     var Model = inherit({
+        __constructor: function () {
+            this._stat = null;
+        },
         stat: function () {
             return this._send({
                 url: this.getUrl('/api/me/'),
+                type: 'GET',
+                headers: this.getHeaders()
+            })
+            .then(function (res) {
+                this._stat = res.collections;
+
+                return res;
+            }, this);
+        },
+        albums: function () {
+            var path = url.parse(this._stat['album-list'].href).path;
+
+            return this._send({
+                url: this.getUrl(path),
+                type: 'GET',
+                headers: this.getHeaders()
+            });
+        },
+        tags: function () {
+            var path = url.parse(this._stat['tag-list'].href).path;
+
+            return this._send({
+                url: this.getUrl(path),
+                type: 'GET',
+                headers: this.getHeaders()
+            });
+        },
+        photos: function () {
+            var path = url.parse(this._stat['photo-list'].href).path;
+
+            return this._send({
+                url: this.getUrl(path),
                 type: 'GET',
                 headers: this.getHeaders()
             });
@@ -15,19 +52,28 @@ modules.define('yandex-fotki-model', [
         getUrl: function (path) {
             var args = Array.prototype.slice.call(arguments, 0);
 
-            return config.url + args.join('/');
+            return config.get('url') + args.join('/');
         },
         getHeaders: function (headers) {
             return jQuery.extend({
                 Accept: 'application/json',
-                Authorization: 'OAuth ' + config.token
+                Authorization: 'OAuth ' + config.get('token')
             }, headers);
         },
         isMethod: function (name) {
             return this._methods.indexOf(name) >= 0;
         },
         _send: function (request) {
-            return jQuery.ajax(request);
+            var defer = vow.defer();
+
+            jQuery.ajax(request)
+                .then(function (res) {
+                    defer.resolve(res);
+                }, function (err) {
+                    defer.reject(err);
+                });
+
+            return defer.promise();
         }
     });
 

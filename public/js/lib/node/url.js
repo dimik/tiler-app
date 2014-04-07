@@ -3,7 +3,7 @@ modules.define('node-url', function (provide) {
     provide({
         parse: function (s) {
             var re = /(\w+:)?\/\/([^\/]+)(([^\?]+)\??(.*))/;
-                matches = re.exec(re),
+                matches = re.exec(s),
                 getMatch = function (index) {
                     return matches[index] || '';
                 },

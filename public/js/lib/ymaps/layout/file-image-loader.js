@@ -1,10 +1,10 @@
-modules.define('ymaps-layout-image-loader', [
+modules.define('ymaps-layout-file-image-loader', [
     'ymaps',
     'jquery'
 ], function (provide, ymaps, jQuery) {
 
-    var ImageLoaderLayout = ymaps.templateLayoutFactory.createClass([
-        '<div class="well dragndrop-image-loader">',
+    var FileImageLoaderLayout = ymaps.templateLayoutFactory.createClass([
+        '<div class="well file-image-loader">',
             '<div class="row-fluid">',
                 '<div class="drop-zone">',
                     '<p class="lead">Перетащите ваше изображение в эту область</p>',
@@ -18,7 +18,7 @@ modules.define('ymaps-layout-image-loader', [
                     '</a>',
                 '</div>',
                 '<div class="ya-fotki-control-group">',
-                    '<a class="btn btn-success" href="#">Выбрать&nbsp;на&nbsp;Яндекс.Фотках</a>',
+                    '<a class="btn btn-success" href="#" data-loader="image">Выбрать&nbsp;на&nbsp;Яндекс.Фотках</a>',
                 '</div>',
             '</div>',
             '<input type="file" class="input-file-hidden" name="image-file"></input>',
@@ -40,11 +40,11 @@ modules.define('ymaps-layout-image-loader', [
             jQuery(document)
                 .on('dragover', jQuery.proxy(this._onDragOver, this))
                 .on('drop', jQuery.proxy(this._onDrop, this))
-                .on('change', ':file', jQuery.proxy(this._onFile, this));
+                .on('change', ':file', jQuery.proxy(this._onFileChange, this));
 
             this._$element
-                .on('click', '.btn-info', jQuery.proxy(this._onFileBtnClick, this))
-                .on('click', '.btn-success', jQuery.proxy(this._onFotkiBtnClick, this));
+                .on('click', '.btn-info', jQuery.proxy(this._onFileOpen, this))
+                .on('click', '.btn-success', jQuery.proxy(this._onLoaderSelect, this));
         },
         _detachHandlers: function () {
             this._$element
@@ -85,19 +85,16 @@ modules.define('ymaps-layout-image-loader', [
 
             return false;
         },
-        _onFile: function (e) {
+        _onFileChange: function (e) {
             return this._fireEvent(e.target.files[0]);
         },
-        _onFotkiBtnClick: function (e) {
+        _onLoaderSelect: function (e) {
             e.preventDefault();
 
-            var control = this.getData().control;
-
-            control.events.fire('fotkiselect', {
-                target: control
-            });
+            this.getData().control.state
+                .set('loader', jQuery(e.target).data('loader'));
         },
-        _onFileBtnClick: function (e) {
+        _onFileOpen: function (e) {
             e.preventDefault();
 
             this._$element.find(':file')
@@ -108,7 +105,12 @@ modules.define('ymaps-layout-image-loader', [
 
             control.events.fire('load', {
                 target: control,
-                source: file
+                image: {
+                    url: URL.createObjectURL(file),
+                    name: file.name,
+                    type: file.type,
+                    size: file.size
+                }
             });
 
             return false;
@@ -124,5 +126,5 @@ modules.define('ymaps-layout-image-loader', [
         }
     });
 
-    provide(ImageLoaderLayout);
+    provide(FileImageLoaderLayout);
 });

@@ -4,22 +4,23 @@ modules.define('map-view-image-reader', [
     'ymaps',
     'ymaps-map',
     'ymaps-control-centered',
-    'ymaps-layout-image-loader'
-], function (provide, inherit, jQuery, ymaps, map, CenteredControl, ImageLoaderLayout) {
+    'ymaps-layout-file-image-loader',
+    'ymaps-layout-fotki-image-loader',
+    'ymaps-layout-fotki-album-selector',
+    'ymaps-layout-fotki-tag-selector'
+], function (provide, inherit, jQuery, ymaps, map, CenteredControl, FileImageLoaderLayout, FotkiImageLoaderLayout, FotkiAlbumSelectorLayout, FotkiTagSelectorLayout) {
 
     var ImageReaderMapView = inherit({
         __constructor: function () {
             this.events = jQuery({});
             this._control = this._createControl();
-            this._source = null;
-            this._data = null;
+            this._stateMonitor = new ymaps.Monitor(this._control.state);
         },
         render: function (data) {
             map.controls.add(this._control);
             this._attachHandlers();
 
             if(data) {
-                this._data = data;
                 this._control.data.set(data);
             }
 
@@ -28,16 +29,8 @@ modules.define('map-view-image-reader', [
         clear: function () {
             this._detachHandlers();
             map.controls.remove(this._control);
-            this._source = null;
-            this._data = null;
 
             return this;
-        },
-        getData: function () {
-            return this._data;
-        },
-        getSource: function () {
-            return this._source;
         },
         show: function () {
             this._control.options.set('visible', true);
@@ -52,56 +45,56 @@ modules.define('map-view-image-reader', [
         _createControl: function (data, options) {
             return new CenteredControl({
                 data: data,
+                state: {
+                    loader: 'file'
+                },
                 options: {
                     float: 'none',
-                    contentBodyLayout: ImageLoaderLayout
+                    contentBodyLayout: FileImageLoaderLayout,
+                    fotkiAlbumSelectorLayout: FotkiAlbumSelectorLayout,
+                    fotkiTagSelectorLayout: FotkiTagSelectorLayout
                 }
             });
         },
         _attachHandlers: function () {
+            this._stateMonitor
+                .add('loader', this._onLoaderChange, this);
+
             this._control.events
                 .add('load', this._onLoad, this)
                 .add('submit', this._onSubmit, this)
-                .add('cancel', this._onCancel, this)
-                .add('fotkiselect', this._onFotkiSelect, this);
+                .add('cancel', this._onCancel, this);
         },
         _detachHandlers: function () {
             this._control.events
-                .remove('fotkiselect', this._onFotkiSelect, this)
                 .remove('cancel', this._onCancel, this)
                 .remove('submit', this._onSubmit, this)
                 .remove('load', this._onLoad, this);
+            this._stateMonitor
+                .removeAll();
         },
         _onLoad: function (e) {
-            var source = this._source = e.get('source');
+            var image = e.get('image');
 
-            switch(source.type) {
+            switch(image.type) {
                 case 'image/png':
                 case 'image/jpeg':
                 case 'image/gif':
                     this.events.trigger(jQuery.Event('load', {
-                        source: source
+                        image: image
                     }));
                     break;
                 default:
                     this.events.trigger(jQuery.Event('error', {
-                        message: source.type.indexOf('image/') === 0?
-                            'Формат изображения "<strong>' + source.type + '</strong>"<br/>не поддерживается данным приложением' :
+                        message: image.type.indexOf('image/') === 0?
+                            'Формат изображения "<strong>' + image.type + '</strong>"<br/>не поддерживается данным приложением' :
                             'Переданный файл не является изображением'
                     }));
             }
         },
-        _onSubmit: function (e) {
-            this.events.trigger(jQuery.Event('submit', {
-                source: this._source
-            }));
-        },
-        _onCancel: function (e) {
-            this._control.options.set('contentBodyLayout', ImageLoaderLayout);
-            this.events.trigger(jQuery.Event('cancel', {}));
-        },
-        _onFotkiSelect: function () {
-            this.events.trigger(jQuery.Event('fotkiselect'));
+        _onLoaderChange: function (loader) {
+            console.log('loaderchange', arguments);
+            this._control.options.set('contentBodyLayout', FotkiImageLoaderLayout);
         }
     });
 

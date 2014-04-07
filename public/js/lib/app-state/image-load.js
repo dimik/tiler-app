@@ -1,9 +1,8 @@
 modules.define('app-state-image-load', [
     'inherit',
     'jquery',
-    'app-state-base',
-    'yandex-fotki-client'
-], function (provide, inherit, jQuery, AppStateBase, YandexFotkiClient) {
+    'app-state-base'
+], function (provide, inherit, jQuery, AppStateBase) {
 
     var ImageLoadState = inherit(AppStateBase, {
         __constructor: function () {
@@ -22,8 +21,7 @@ modules.define('app-state-image-load', [
         _attachHandlers: function () {
             this._app.reader.events.on({
                 load: jQuery.proxy(this._onImageLoad, this),
-                error: jQuery.proxy(this._onImageError, this),
-                fotkiselect: jQuery.proxy(this._onFotkiSelect, this)
+                error: jQuery.proxy(this._onImageError, this)
             });
         },
         _detachHandlers: function () {
@@ -33,17 +31,16 @@ modules.define('app-state-image-load', [
             var app = this._app,
                 tileSource = app.tiler.getTileSource();
 
-            app.tiler.openSource(URL.createObjectURL(e.source))
+            app.tiler.openSource(e.image.url)
                 .done(function (res) {
-                    URL.revokeObjectURL(e.source);
                     app.options.set({
                         imageUrl: res.src,
-                        imageName: e.source.name,
-                        imageType: e.source.type,
-                        imageSize: e.source.size,
+                        imageName: e.image.name,
+                        imageType: e.image.type,
+                        imageSize: e.image.size,
                         imageWidth: res.width,
                         imageHeight: res.height,
-                        tileType: e.source.type,
+                        tileType: e.image.type,
                         layerMinZoom: tileSource.getMinZoom(),
                         layerMaxZoom: tileSource.getMaxZoom()
                     });
@@ -62,16 +59,6 @@ modules.define('app-state-image-load', [
                     .on('cancel', function () {
                         app.reader.render();
                     });
-        },
-        _onFotkiSelect: function () {
-            var client = new YandexFotkiClient();
-
-            client.request('stat')
-                .then(function (res) {
-                    debugger;
-                }, function (err) {
-                    debugger;
-                });
         }
     });
 
