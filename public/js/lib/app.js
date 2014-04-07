@@ -22,7 +22,6 @@ modules.define('app', [
             this._stateFactory = new AppStateFactory(this);
 
             this.setState('user-auth');
-            this._attachHandlers();
         },
         setState: function (state) {
             this._state = this._stateFactory.create(state);
