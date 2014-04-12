@@ -49,22 +49,10 @@ modules.define('yandex-fotki-model', [
                 headers: this.getHeaders()
             });
         },
-        photo: function (href) {
-            var path = url.parse(href).path;
-
-            return this._send({
-                url: this.getUrl(path),
-                type: 'GET',
-                beforeSend: function (xhr) {
-                    xhr.overrideMimeType('text/plain; charset=x-user-defined');
-                },
-                headers: this.getHeaders()
-            });
-        },
         getUrl: function (path) {
             var args = Array.prototype.slice.call(arguments, 0);
 
-            return config.get('url') + args.join('/');
+            return config.get('apiUrl') + args.join('/');
         },
         getHeaders: function (headers) {
             return jQuery.extend({

@@ -2,9 +2,10 @@ modules.define('yandex-fotki-client', [
     'inherit',
     'jquery',
     'vow',
-    'node-path',
-    'yandex-fotki-model'
-], function (provide, inherit, jQuery, vow, path, Model) {
+    'node-url',
+    'yandex-fotki-model',
+    'yandex-fotki-config'
+], function (provide, inherit, jQuery, vow, url, Model, config) {
 
     var YandexFotkiClient = inherit({
         __constructor: function () {
@@ -12,6 +13,9 @@ modules.define('yandex-fotki-client', [
         },
         getModel: function () {
             return this._model;
+        },
+        getPhotoUrl: function (photo) {
+            return config.get('photoUrl') + url.parse(photo).path;
         },
         request: function (method, args) {
             var defer = vow.defer();

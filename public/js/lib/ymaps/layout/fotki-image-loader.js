@@ -46,6 +46,7 @@ modules.define('ymaps-layout-fotki-image-loader', [
             this._stateMonitor
                 .add('album', this._onAlbumChange, this)
                 .add('tag', this._onTagChange, this)
+                .add('photo', this._onPhotoSelect, this)
                 .add('photos', this._onPhotosChange, this);
             this._$element
                 // .on('click', '.thumbnail', jQuery.proxy(this._onImageSelect, this))
@@ -85,7 +86,6 @@ modules.define('ymaps-layout-fotki-image-loader', [
                 .then(function (photos) {
                     var data = this.getData().data;
 
-                    this._clearScrollPosition();
                     data.set('photos', photos);
                 }, this);
         },
@@ -96,7 +96,6 @@ modules.define('ymaps-layout-fotki-image-loader', [
                 .then(function (photos) {
                     var data = this.getData().data;
 
-                    this._clearScrollPosition();
                     data.set('photos', photos);
                 }, this);
         },
@@ -111,33 +110,17 @@ modules.define('ymaps-layout-fotki-image-loader', [
                     data.set('photos', photos);
                 }, this);
         },
-        /*
-        _onImageSelect: function (e) {
-            e.preventDefault();
+        _onPhotoSelect: function (photo) {
+            var control = this.getData().control;
 
-            var target = jQuery(e.currentTarget),
-                control = this.getData().control,
-                client = this._client,
-                url = target.data('url');
-
-            client.request('photo', [url])
-                .then(function (res) {
-                debugger;
-                    control.events.fire('load', {
-                        target: control,
-                        image: {
-                            url: target.data('url'),
-                            name: target.attr('title'),
-                            size: Math.ceil(target.data('size') / 1024),
-                            type: 'image/jpeg'
-                        }
-                    });
+            control.events
+                .fire('load', {
+                    target: control,
+                    image: jQuery.extend({}, photo, {
+                        url: this._client.getPhotoUrl(photo.url),
+                        type: 'image/jpeg'
+                    })
                 });
-        },
-        */
-        _clearScrollPosition: function () {
-            this.getData().control.state
-                .set('scrollPosition', 0);
         },
         _onLoaderSelect: function (e) {
             e.preventDefault();

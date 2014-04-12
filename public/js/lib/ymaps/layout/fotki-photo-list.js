@@ -1,8 +1,7 @@
 modules.define('ymaps-layout-fotki-photo-list', [
     'ymaps',
-    'jquery',
-    'node-url'
-], function (provide, ymaps, jQuery, url) {
+    'jquery'
+], function (provide, ymaps, jQuery) {
 
     var FotkiPhotoListLayout = ymaps.templateLayoutFactory.createClass([
         '<div style="width:95%; margin:0 auto;">',
@@ -15,6 +14,7 @@ modules.define('ymaps-layout-fotki-photo-list', [
                     '<li class="span3">',
                         '<a href="#" class="thumbnail" title="{{ photo.title }}"',
                             'data-url="{{ photo.img.orig.href }}"',
+                            'data-name="{{ photo.title }}"',
                             'data-size="{{ photo.img.orig.bytesize }}"',
                             'data-width="{{ photo.img.orig.width }}"',
                             'data-height="{{ photo.img.orig.height }}">',
@@ -40,7 +40,7 @@ modules.define('ymaps-layout-fotki-photo-list', [
         clear: function () {
             this._detachHandlers();
 
-            this.constructor.superclass.clear.apply(this, arguments);
+            FotkiPhotoListLayout.superclass.clear.apply(this, arguments);
         },
        _attachHandlers: function () {
             this._$element
@@ -54,18 +54,12 @@ modules.define('ymaps-layout-fotki-photo-list', [
         _onImageSelect: function (e) {
             e.preventDefault();
 
-            var target = jQuery(e.currentTarget),
-                control = this.getData().control;
+            var target = jQuery(e.currentTarget);
 
-            control.events.fire('load', {
-                target: control,
-                image: {
-                    url: '/img/yandex/fotki' + url.parse(target.data('url')).path,
-                    name: target.attr('title'),
-                    size: target.data('size'),
-                    type: 'image/jpeg'
-                }
-            });
+            this.getData().control.state
+                .set({
+                    photo: target.data()
+                });
         },
         _onMoreImages: function (e) {
             var target = jQuery(e.target);
@@ -74,8 +68,7 @@ modules.define('ymaps-layout-fotki-photo-list', [
 
             this.getData().control.state
                 .set({
-                    photos: target.data('url'),
-                    scrollPosition: target.closest('.row-fluid').scrollTop()
+                    photos: target.data('url')
                 });
         }
     });
