@@ -7,8 +7,9 @@ modules.define('map-view-image-reader', [
     'ymaps-layout-file-image-loader',
     'ymaps-layout-fotki-image-loader',
     'ymaps-layout-fotki-album-selector',
-    'ymaps-layout-fotki-tag-selector'
-], function (provide, inherit, jQuery, ymaps, map, CenteredControl, FileImageLoaderLayout, FotkiImageLoaderLayout, FotkiAlbumSelectorLayout, FotkiTagSelectorLayout) {
+    'ymaps-layout-fotki-tag-selector',
+    'ymaps-layout-fotki-photo-list'
+], function (provide, inherit, jQuery, ymaps, map, CenteredControl, FileImageLoaderLayout, FotkiImageLoaderLayout, FotkiAlbumSelectorLayout, FotkiTagSelectorLayout, FotkiPhotoListLayout) {
 
     var ImageReaderMapView = inherit({
         __constructor: function () {
@@ -52,7 +53,8 @@ modules.define('map-view-image-reader', [
                     float: 'none',
                     contentBodyLayout: FileImageLoaderLayout,
                     fotkiAlbumSelectorLayout: FotkiAlbumSelectorLayout,
-                    fotkiTagSelectorLayout: FotkiTagSelectorLayout
+                    fotkiTagSelectorLayout: FotkiTagSelectorLayout,
+                    fotkiPhotoListLayout: FotkiPhotoListLayout
                 }
             });
         },
@@ -93,8 +95,9 @@ modules.define('map-view-image-reader', [
             }
         },
         _onLoaderChange: function (loader) {
-            console.log('loaderchange', arguments);
-            this._control.options.set('contentBodyLayout', FotkiImageLoaderLayout);
+            this._control.options.set('contentBodyLayout', loader == 'file'?
+                FileImageLoaderLayout : FotkiImageLoaderLayout
+            );
         }
     });
 

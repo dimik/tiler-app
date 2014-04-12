@@ -16,7 +16,7 @@ modules.define('yandex-fotki-client', [
         request: function (method, args) {
             var defer = vow.defer();
 
-            this._model[method](args)
+            this._model[method].apply(this._model, args)
                 .then(function (res) {//, status, jqXHR) {
                     // var contentType = jqXHR.getResponseHeader('content-type');
 

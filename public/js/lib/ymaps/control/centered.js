@@ -5,20 +5,10 @@ modules.define('ymaps-control-centered', [
 ], function (provide, inherit, ymaps, BaseControl) {
 
     var ContentLayout = ymaps.templateLayoutFactory.createClass([
-            '<div class="container-fluid" ',
-                '{% include options.contentBodyParentLayout %}',
+            '<div class="container-fluid">',
+                '{% include options.contentBodyLayout %}',
             '</div>'
         ].join(''), {
-            init: function () {
-                ContentLayout.superclass.init.call(this);
-                var layoutData = this.getData();
-                this.sharedEvents = new ymaps.event.Manager(); 
-                
-                this.setData(ymaps.util.extend({}, layoutData, {
-                    sharedEvents: this.sharedEvents 
-                }));
-            },
-
             build: function () {
                 ContentLayout.superclass.build.call(this);
                 this._setupListeners();
@@ -35,14 +25,10 @@ modules.define('ymaps-control-centered', [
                     control = layoutData.control;
                 this._mapListener = control.getMap().events.group()
                     .add('sizechange', this._setPosition, this);
-
-                this._subLayoutListener = this.sharedEvents.group()
-                    .add('sublayoutsizechange', this._setPosition, this);
             },
 
             _clearListeners: function () {
                 this._mapListener.removeAll();
-                this._subLayoutListener.removeAll();
             },
 
             _setPosition: function () {
@@ -51,14 +37,9 @@ modules.define('ymaps-control-centered', [
                     layoutContentElement = this.getElement().firstChild;
 
                 control.options.set('position', {
-                    top: mapSize[1] / 2 - layoutContentElement.offsetHeight / 2,
-                    left: mapSize[0] / 2 - layoutContentElement.offsetWidth / 2
+                    top: Math.round(mapSize[1] / 2 - layoutContentElement.offsetHeight / 2),
+                    left: Math.round(mapSize[0] / 2 - layoutContentElement.offsetWidth / 2)
                 });
-            }
-        }),
-        ContentBodyParentLayout = ymaps.templateLayoutFactory.createClass('{% include options.contentBodyLayout observeSize %}', {
-            onSublayoutSizeChange: function (sublayoutInfo, nodeSizeByContent) {
-                this.getData().sharedEvents.fire('sublayoutsizechange');
             }
         });
 
@@ -68,7 +49,6 @@ modules.define('ymaps-control-centered', [
 
             this.options.set({
                 contentLayout: ContentLayout,
-                contentBodyParentLayout: ContentBodyParentLayout,
                 float: 'none'
             });
         }

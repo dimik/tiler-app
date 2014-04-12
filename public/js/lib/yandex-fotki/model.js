@@ -40,12 +40,24 @@ modules.define('yandex-fotki-model', [
                 headers: this.getHeaders()
             });
         },
-        photos: function () {
-            var path = url.parse(this._stat['photo-list'].href).path;
+        photos: function (href) {
+            var path = url.parse(href || this._stat['photo-list'].href).path;
 
             return this._send({
                 url: this.getUrl(path),
                 type: 'GET',
+                headers: this.getHeaders()
+            });
+        },
+        photo: function (href) {
+            var path = url.parse(href).path;
+
+            return this._send({
+                url: this.getUrl(path),
+                type: 'GET',
+                beforeSend: function (xhr) {
+                    xhr.overrideMimeType('text/plain; charset=x-user-defined');
+                },
                 headers: this.getHeaders()
             });
         },
