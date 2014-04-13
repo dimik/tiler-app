@@ -3,7 +3,7 @@ modules.define('app-config', [
 ], function (provide, OptionManager) {
 
     provide(new OptionManager({
-        token: 'ad47a7d4279b4edaaf1bd3e8c91d4539',
+        token: 'f9b2f399bb11407ebe09b70a4a94f046',
         tilerOutput: 'tiles-' + Date.now(),
 
         tileUrlTemplate: '/%s/%s-%s.%s',
