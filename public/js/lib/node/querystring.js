@@ -7,7 +7,7 @@ modules.define('node-querystring', function (provide) {
                 params = {};
 
             while(match = re.exec(s)) {
-                urlParams[decode(match[1])] = decode(match[2]);
+                params[decode(match[1])] = decode(match[2]);
             }
 
             return params;
