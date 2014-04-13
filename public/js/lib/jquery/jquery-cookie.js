@@ -15,7 +15,7 @@
     } else if (typeof modules === 'object') {
         modules.define('jquery-cookie', ['jquery'], function (provide, jquery) {
             factory(jquery);
-            provide(jquery);
+            provide(jquery.cookie);
         });
     } else {
         // Browser globals
