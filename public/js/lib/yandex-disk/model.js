@@ -149,7 +149,7 @@ modules.define('yandex-disk-model', [
         getUrl: function (path) {
             var args = Array.prototype.slice.call(arguments, 0);
 
-            return config.url + args.join('/');
+            return config.get('apiUrl') + args.join('/');
         },
         getHeaders: function (headers) {
             return jQuery.extend({

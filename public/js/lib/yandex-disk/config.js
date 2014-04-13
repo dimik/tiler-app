@@ -1,8 +1,10 @@
-modules.define('yandex-disk-config', function (provide) {
+modules.define('yandex-disk-config', [
+    'ymaps-option-manager',
+    'app-config'
+], function (provide, OptionManager, parentConfig) {
 
-    provide({
-        url: '/api/yandex/disk',
-        home: '/',
-        token: 'ad47a7d4279b4edaaf1bd3e8c91d4539'
-    });
+    provide(new OptionManager({
+        apiUrl: '/api/yandex/disk',
+        home: '/'
+    }, parentConfig));
 });

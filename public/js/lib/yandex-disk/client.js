@@ -14,9 +14,9 @@ modules.define('yandex-disk-client', [
 
     var YandexDiskClient = inherit(DirectoryStack, {
         __constructor: function () {
-            this.__base.call(this, config.home);
+            this.__base.call(this, config.get('home'));
 
-            this._model = new Model(config.token);
+            this._model = new Model(config.get('token'));
         },
         getModel: function () {
             return this._model;
@@ -75,7 +75,7 @@ modules.define('yandex-disk-client', [
                 };
 
             if(!dir || dir === '~') {
-                done(config.home);
+                done(config.get('home'));
             }
             else {
                 if(this.dirs().indexOf(path) > -1) {

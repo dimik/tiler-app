@@ -1,5 +1,6 @@
 modules.define('app', [
     'inherit',
+    'map-view-user-auth',
     'map-view-popup',
     'map-view-preloader',
     'map-view-image-reader',
@@ -8,11 +9,12 @@ modules.define('app', [
     'layer-tiler',
     'app-state-factory',
     'app-config'
-], function (provide, inherit, PopupMapView, PreloaderMapView, ImageReaderMapView, LayerSettingsMapView, TileSourceLayerMapView, LayerTiler, AppStateFactory, config) {
+], function (provide, inherit, UserAuthMapView, PopupMapView, PreloaderMapView, ImageReaderMapView, LayerSettingsMapView, TileSourceLayerMapView, LayerTiler, AppStateFactory, config) {
 
     var App = inherit({
         __constructor: function () {
             this.options = config;
+            this.auth = new UserAuthMapView();
             this.popup = new PopupMapView();
             this.preloader = new PreloaderMapView();
             this.reader = new ImageReaderMapView();
