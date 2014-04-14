@@ -1,56 +1,75 @@
 modules.define('map-view-popup', [
     'inherit',
-    'jquery',
     'ymaps',
     'ymaps-map',
-    'ymaps-control-centered',
-    'ymaps-layout-popup'
-], function (provide, inherit, jQuery, ymaps, map, CenteredControl, PopupLayout) {
+    'ymaps-control-centered'
+], function (provide, inherit, ymaps, map, CenteredControl) {
 
     var PopupMapView = inherit({
         __constructor: function () {
-            this.events = jQuery({});
-            this._control = this._createControl();
-            this._timeoutId == null;
-            this._data = null;
+            this.events = new ymaps.event.Manager();
+
+            map.controls.add(
+                this._control = this._createControl()
+            );
         },
-        render: function (data) {
-            map.controls.add(this._control);
-            this._attachHandlers();
-
-            this._timeoutId = window.setTimeout(function () {
-                this._fireEvent('cancel');
-                this.clear();
-            }.bind(this), 3000);
-
-            if(data) {
-                this._data = data;
-                this._control.data.set(data);
-            }
+        render: function (preset, data) {
+            this.setPreset(preset)
+                .setData(data);
 
             return this;
         },
         clear: function () {
-            this._detachHandlers();
-            map.controls.remove(this._control);
-            this._data = null;
-            if(this._timeoutId) {
-                window.clearTimeout(this._timeoutId);
-                this._timeoutId = null;
-            }
+            this.clearPreset()
+                .clearData();
 
             return this;
         },
-        getData: function () {
-            return this._data;
+        listen: function (events) {
+            this._setupListeners(events);
+
+            return this;
+        },
+        unlisten: function () {
+            this._clearListeners();
+
+            return this;
         },
         show: function () {
-            this._control.options.set('visible', true);
+            this._control.options
+                .set('visible', true);
 
             return this;
         },
         hide: function () {
-            this._control.options.set('visible', false);
+            this._control.options
+                .set('visible', false);
+
+            return this;
+        },
+        setPreset: function (preset) {
+            this._control.options
+                .set('preset', preset);
+
+            return this;
+        },
+        clearPreset: function () {
+            this._control.options
+                .unset('preset');
+
+            return this;
+        },
+        setData: function (data) {
+            if(data) {
+                this._control.data
+                    .set(data);
+            }
+
+            return this;
+        },
+        clearData: function () {
+            this._control.data
+                .unsetAll();
 
             return this;
         },
@@ -58,25 +77,22 @@ modules.define('map-view-popup', [
             return new CenteredControl({
                 data: data,
                 options: {
-                    float: 'none',
-                    contentBodyLayout: PopupLayout
+                    float: 'none'
                 }
             });
         },
-        _attachHandlers: function () {
-            this._control.events
-                .add('cancel', this._onCancel, this);
+        _setupListeners: function (events) {
+            this._listeners = this._control.events.group()
+                .add(events, this._onEvent, this);
         },
-        _detachHandlers: function () {
-            this._control.events
-                .remove('cancel', this._onCancel, this);
+        _clearListeners: function () {
+            if(this._listeners) {
+                this._listeners.removeAll();
+                this._listeners = null;
+            }
         },
-        _onCancel: function (e) {
-            this._fireEvent('cancel');
-            this.clear();
-        },
-        _fireEvent: function (e, data) {
-            this.events.trigger(jQuery.Event(e, data));
+        _onEvent: function (e) {
+            this.events.fire(e.get('type'), e);
         }
     });
 

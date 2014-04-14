@@ -4,7 +4,7 @@ modules.define('ymaps-layout-file-image-loader', [
 ], function (provide, ymaps, jQuery) {
 
     var FileImageLoaderLayout = ymaps.templateLayoutFactory.createClass([
-        '<div class="well file-image-loader">',
+        '<div class="well well-white file-image-loader">',
             '<div class="row-fluid">',
                 '<div class="drop-zone">',
                     '<p class="lead">Перетащите ваше изображение в эту область</p>',
@@ -25,7 +25,7 @@ modules.define('ymaps-layout-file-image-loader', [
         '</div>'
     ].join(''), {
         build: function () {
-            this.constructor.superclass.build.apply(this, arguments);
+            FileImageLoaderLayout.superclass.build.apply(this, arguments);
 
             this._$element = jQuery(this.getElement());
 
@@ -34,7 +34,7 @@ modules.define('ymaps-layout-file-image-loader', [
         clear: function () {
             this._detachHandlers();
 
-            this.constructor.superclass.build.apply(this, arguments);
+            FileImageLoaderLayout.superclass.build.apply(this, arguments);
         },
         _attachHandlers: function () {
             jQuery(document)
@@ -125,6 +125,11 @@ modules.define('ymaps-layout-file-image-loader', [
             return this._$element.find('.drop-zone');
         }
     });
+
+    ymaps.option.presetStorage
+        .add('popup#fileImageLoader', {
+            contentBodyLayout: FileImageLoaderLayout
+        });
 
     provide(FileImageLoaderLayout);
 });

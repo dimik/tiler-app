@@ -1,8 +1,10 @@
 modules.define('app-state-image-load', [
     'inherit',
     'jquery',
-    'app-state-base'
-], function (provide, inherit, jQuery, AppStateBase) {
+    'app-state-base',
+    'ymaps-layout-file-image-loader',
+    'ymaps-layout-alert'
+], function (provide, inherit, jQuery, AppStateBase, FileImageLoaderLayout, AlertLayout) {
 
     var ImageLoadState = inherit(AppStateBase, {
         __constructor: function () {
@@ -11,36 +13,40 @@ modules.define('app-state-image-load', [
             this._name = 'image-load';
         },
         init: function () {
-            this._attachHandlers();
-            this._app.reader.render();
+            this._setupListeners();
+            this._app.popup
+                .render('popup#fileImageLoader');
         },
         destroy: function () {
-            this._detachHandlers();
-            this._app.reader.clear();
+            this._clearListeners();
+            this._app.popup
+                .clear();
         },
-        _attachHandlers: function () {
-            this._app.reader.events.on({
-                load: jQuery.proxy(this._onImageLoad, this),
-                error: jQuery.proxy(this._onImageError, this)
-            });
+        _setupListeners: function () {
+            this._app.popup.events
+                .add('load', this._onImageLoad, this)
+                .add('error', this._onImageError, this);
         },
-        _detachHandlers: function () {
-            this._app.reader.events.off();
+        _clearListeners: function () {
+            this._app.popup.events
+                .remove('load', this._onImageLoad, this)
+                .remove('error', this._onImageError, this);
         },
         _onImageLoad: function (e) {
             var app = this._app,
+                imageData = e.get('image'),
                 tileSource = app.tiler.getTileSource();
 
-            app.tiler.openSource(e.image.url)
+            app.tiler.openSource(imageData.url)
                 .done(function (res) {
                     app.options.set({
                         imageUrl: res.src,
-                        imageName: e.image.name,
-                        imageType: e.image.type,
-                        imageSize: e.image.size,
+                        imageName: imageData.name,
+                        imageType: imageData.type,
+                        imageSize: imageData.size,
                         imageWidth: res.width,
                         imageHeight: res.height,
-                        tileType: e.image.type,
+                        tileType: imageData.type,
                         layerMinZoom: tileSource.getMinZoom(),
                         layerMaxZoom: tileSource.getMaxZoom()
                     });
@@ -50,14 +56,13 @@ modules.define('app-state-image-load', [
         _onImageError: function (e) {
             var app = this._app;
 
-            app.reader.clear();
             app.popup
-                .render({
+                .clear()
+                .render('popup#alert', {
                     content: e.message
                 })
                 .events
-                    .on('cancel', function () {
-                        app.reader.render();
+                    .add('cancel', function () {
                     });
         }
     });

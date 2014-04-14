@@ -3,8 +3,9 @@ modules.define('app-state-user-auth', [
     'jquery-cookie',
     'node-querystring',
     'app-state-base',
+    'ymaps-layout-user-auth',
     'app-config'
-], function (provide, inherit, cookie, querystring, AppStateBase, config) {
+], function (provide, inherit, cookie, querystring, AppStateBase, UserAuthLayout, config) {
 
     var UserAuthState = inherit(AppStateBase, {
         __constructor: function () {
@@ -30,11 +31,13 @@ modules.define('app-state-user-auth', [
                 next();
             }
             else {
-                this._app.auth.render();
+                this._app.popup
+                    .render('popup#userAuth');
             }
         },
         destroy: function () {
-            this._app.auth.clear();
+            this._app.popup
+                .clear();
         }
     });
 

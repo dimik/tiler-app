@@ -21,14 +21,14 @@ modules.define('ymaps-control-centered', [
             },
 
             _setupListeners: function () {
-                var layoutData = this.getData(),
-                    control = layoutData.control;
-                this._mapListener = control.getMap().events.group()
+                var control = this.getData().control;
+
+                this._listeners = control.getMap().events.group()
                     .add('sizechange', this._setPosition, this);
             },
 
             _clearListeners: function () {
-                this._mapListener.removeAll();
+                this._listeners.removeAll();
             },
 
             _setPosition: function () {
@@ -49,6 +49,7 @@ modules.define('ymaps-control-centered', [
 
             this.options.set({
                 contentLayout: ContentLayout,
+                contentBodyLayout: ymaps.templateLayoutFactory.createClass(''),
                 float: 'none'
             });
         }

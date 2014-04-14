@@ -4,7 +4,7 @@ modules.define('ymaps-layout-layer-settings', [
 ], function (provide, ymaps, jQuery) {
 
     var LayerSettingsLayout = ymaps.templateLayoutFactory.createClass([
-        '<div class="well layer-settings">',
+        '<div class="well well-white layer-settings">',
     //        '<form>',
             '<div class="row-fluid">',
 
@@ -42,7 +42,7 @@ modules.define('ymaps-layout-layer-settings', [
         '</div>'
     ].join(''), {
         build: function () {
-            this.constructor.superclass.build.apply(this, arguments);
+            LayerSettingsLayout.superclass.build.apply(this, arguments);
 
             this._$element = jQuery(this.getElement());
 
@@ -51,7 +51,7 @@ modules.define('ymaps-layout-layer-settings', [
         clear: function () {
             this._detachHandlers();
 
-            this.constructor.superclass.clear.apply(this, arguments);
+            LayerSettingsLayout.superclass.clear.apply(this, arguments);
         },
         _attachHandlers: function () {
             this._$element.find('input')

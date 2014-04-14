@@ -4,36 +4,23 @@ modules.define('ymaps-layout-user-auth', [
 ], function (provide, ymaps, jQuery) {
 
     var UserAuthLayout = ymaps.templateLayoutFactory.createClass([
-        '<div class="well span10 offset1">',
-            '<div class="row-fluid">',
-                '<p class="lead">Приложение &laquo;Подготовка слоя тайлов&raquo; позволяет автоматизировать процесс подготовки произвольного изображения для показа на веб-странице с помощью API Яндекс.Карт.</p>',
-                '<p class="lead">Приложение использует Яндекс.Диск в качестве сервиса хранения изображений (тайлов).</p>',
-                '<blockquote>',
-                    '<p>Яндекс.Диск — облачный сервис, принадлежащий компании Яндекс, позволяющий пользователям хранить свои данные на серверах в облаке и передавать их другим пользователям в Интернете.</p>',
-                '</blockquote>',
-                '<br/>',
-                '<p class="lead">Для работы приложения необходимо пройти процедуру авторизации на Яндекс.Паспорте.</p>',
-                '<a class="btn btn-primary btn-large" href="https://oauth.yandex.ru/authorize?response_type=token&client_id=9843ecf1ffb54e8b8d5ef5223a32c810">Авторизоваться на Яндексе</a>',
-            '</div>',
+        '<div class="well well-white user-auth">',
+            '<h1>Подготовка слоя тайлов</h1>',
+            '<p class="lead">Приложение &laquo;Подготовка слоя тайлов&raquo; позволяет автоматизировать<br/>процесс подготовки произвольного изображения<br/>для показа на веб-странице с помощью <strong>API&nbsp;Яндекс.Карт</strong>.</p>',
+            '<p class="lead">Приложение использует <strong>Яндекс.Диск</strong> в качестве сервиса<br/>хранения изображений&nbsp;(тайлов).</p>',
+            '<!--blockquote>',
+                '<p>Яндекс.Диск — облачный сервис, принадлежащий компании Яндекс, позволяющий пользователям хранить свои данные на серверах в облаке и передавать их другим пользователям в Интернете.</p>',
+            '</blockquote-->',
+            '<br/>',
+            '<p class="lead">Для работы приложения необходимо пройти процедуру<br/>авторизации на&nbsp;Яндекс.Паспорте.</p>',
+            '<a class="btn btn-success btn-large" href="https://oauth.yandex.ru/authorize?response_type=token&client_id=9843ecf1ffb54e8b8d5ef5223a32c810">Авторизоваться на Яндексе</a>',
         '</div>'
-    ].join(''), {
-        build: function () {
-            UserAuthLayout.superclass.build.apply(this, arguments);
+    ].join(''));
 
-            this._$element = jQuery(this.getElement());
-
-            this._attachHandlers();
-        },
-        clear: function () {
-            this._detachHandlers();
-
-            UserAuthLayout.superclass.build.apply(this, arguments);
-        },
-        _attachHandlers: function () {
-        },
-        _detachHandlers: function () {
-        }
-    });
+    ymaps.option.presetStorage
+        .add('popup#userAuth', {
+            contentBodyLayout: UserAuthLayout
+        });
 
     provide(UserAuthLayout);
 });

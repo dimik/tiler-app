@@ -1,4 +1,4 @@
-modules.define('map-view-layer-settings', [
+modules.define('map-view-sidebar', [
     'inherit',
     'jquery',
     'ymaps',

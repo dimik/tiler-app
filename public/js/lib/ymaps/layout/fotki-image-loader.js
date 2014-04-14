@@ -2,28 +2,31 @@ modules.define('ymaps-layout-fotki-image-loader', [
     'ymaps',
     'jquery',
     'vow',
-    'yandex-fotki-client'
-], function (provide, ymaps, jQuery, vow, YandexFotkiClient) {
+    'yandex-fotki-client',
+    'ymaps-layout-fotki-album-selector',
+    'ymaps-layout-fotki-tag-selector',
+    'ymaps-layout-fotki-photo-list'
+], function (provide, ymaps, jQuery, vow, YandexFotkiClient, AlbumSelectorLayout, TagSelectorLayout, PhotoListLayout) {
 
     var FotkiImageLoaderLayout = ymaps.templateLayoutFactory.createClass([
-        '<div class="well fotki-image-loader">',
+        '<div class="well well-white fotki-image-loader">',
             '<a class="close" href="#" data-loader="file">&times;</a>',
             '<div class="row-fluid">',
                 '<form class="form-inline" style="padding-left: 15px;">',
 
                     '<span class="help-inline">Выберите&nbsp;</span>',
 
-                    '{% include options.fotkiAlbumSelectorLayout %}',
+                    '{% include options.albumSelectorLayout %}',
 
                     '<span class="help-inline">&nbsp;или&nbsp;</span>',
 
-                    '{% include options.fotkiTagSelectorLayout %}',
+                    '{% include options.tagSelectorLayout %}',
 
                 '</form>',
             '</div>',
             '<div id="container" class="row-fluid" style="height:400px;overflow:scroll;">',
 
-                '{% include options.fotkiPhotoListLayout %}',
+                '{% include options.photoListLayout %}',
 
             '</div>',
         '</div>'
@@ -49,7 +52,6 @@ modules.define('ymaps-layout-fotki-image-loader', [
                 .add('photo', this._onPhotoSelect, this)
                 .add('photos', this._onPhotosChange, this);
             this._$element
-                // .on('click', '.thumbnail', jQuery.proxy(this._onImageSelect, this))
                 .on('click', '.close', jQuery.proxy(this._onLoaderSelect, this));
         },
         _detachHandlers: function () {
@@ -61,7 +63,7 @@ modules.define('ymaps-layout-fotki-image-loader', [
         _loadData: function () {
             var client = this._client;
 
-            client.request('stat')
+            return client.request('stat')
                 .then(function (res) {
                     return vow.all([
                         client.request('albums'),
@@ -129,6 +131,14 @@ modules.define('ymaps-layout-fotki-image-loader', [
                 .set('loader', jQuery(e.target).data('loader'));
         }
     });
+
+    ymaps.option.presetStorage
+        .add('popup#fotkiImageLoader', {
+            contentBodyLayout: FotkiImageLoaderLayout,
+            albumSelectorLayout: AlbumSelectorLayout,
+            tagSelectorLayout: TagSelectorLayout,
+            photoListLayout: PhotoListLayout
+        });
 
     provide(FotkiImageLoaderLayout);
 });

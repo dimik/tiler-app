@@ -1,31 +1,31 @@
-modules.define('ymaps-layout-popup', [
+modules.define('ymaps-layout-alert', [
     'ymaps',
     'jquery'
 ], function (provide, ymaps, jQuery) {
 
-    var PopupLayout = ymaps.templateLayoutFactory.createClass([
+    var AlertLayout = ymaps.templateLayoutFactory.createClass([
         '<div class="alert alert-block alert-{{ options.priority|default:"error" }}">',
             '<a href="#" class="close">&times;</a>',
             '<p>{{ data.content|raw }}</p>',
         '</div>'
     ].join(''), {
         build: function () {
-            this.constructor.superclass.build.apply(this, arguments);
+            AlertLayout.superclass.build.apply(this, arguments);
 
             this._$element = jQuery(this.getElement());
 
-            this._attachHandlers();
+            this._setupListeners();
         },
         clear: function () {
-            this._detachHandlers();
+            this._clearListeners();
 
-            this.constructor.superclass.build.apply(this, arguments);
+            AlertLayout.superclass.build.apply(this, arguments);
         },
-        _attachHandlers: function () {
+        _setupListeners: function () {
             this._$element
                 .on('click', '.close', jQuery.proxy(this._onCancel, this));
         },
-        _detachHandlers: function () {
+        _clearListeners: function () {
             this._$element
                 .off('click', '.close');
         },
@@ -40,5 +40,5 @@ modules.define('ymaps-layout-popup', [
         }
     });
 
-    provide(PopupLayout);
+    provide(AlertLayout);
 });
