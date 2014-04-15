@@ -127,8 +127,13 @@ modules.define('ymaps-layout-fotki-image-loader', [
         _onLoaderSelect: function (e) {
             e.preventDefault();
 
-            this.getData().control.state
-                .set('loader', jQuery(e.target).data('loader'));
+            var control = this.getData().control;
+
+            control.events
+                .fire('loaderchange', {
+                    target: control,
+                    loader: jQuery(e.target).data('loader')
+                });
         }
     });
 

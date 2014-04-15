@@ -65,8 +65,8 @@ modules.define('map-view-popup', [
         _createControl: function () {
             var control = new CenteredControl();
 
-            control.events.setParent(this.events);
             map.controls.add(control);
+            control.events.setParent(this.events);
 
             return control;
         }
