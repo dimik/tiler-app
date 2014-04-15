@@ -6,7 +6,9 @@ modules.define('ymaps-control-centered', [
 
     var ContentLayout = ymaps.templateLayoutFactory.createClass([
             '<div class="container-fluid">',
-                '{% include options.contentBodyLayout %}',
+                '{% if options.contentBodyLayout %}',
+                    '{% include options.contentBodyLayout %}',
+                '{% endif %}',
             '</div>'
         ].join(''), {
             build: function () {
@@ -49,7 +51,6 @@ modules.define('ymaps-control-centered', [
 
             this.options.set({
                 contentLayout: ContentLayout,
-                contentBodyLayout: ymaps.templateLayoutFactory.createClass(''),
                 float: 'none'
             });
         }

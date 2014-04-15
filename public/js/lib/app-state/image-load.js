@@ -3,8 +3,9 @@ modules.define('app-state-image-load', [
     'jquery',
     'app-state-base',
     'ymaps-layout-file-image-loader',
+    'ymaps-layout-fotki-image-loader',
     'ymaps-layout-alert'
-], function (provide, inherit, jQuery, AppStateBase, FileImageLoaderLayout, AlertLayout) {
+], function (provide, inherit, jQuery, AppStateBase, FileImageLoaderLayout, FotkiImageLoaderLayout, AlertLayout) {
 
     var ImageLoadState = inherit(AppStateBase, {
         __constructor: function () {
@@ -15,7 +16,7 @@ modules.define('app-state-image-load', [
         init: function () {
             this._setupListeners();
             this._app.popup
-                .render('popup#fileImageLoader');
+                .render('fileImageLoader');
         },
         destroy: function () {
             this._clearListeners();
@@ -23,14 +24,18 @@ modules.define('app-state-image-load', [
                 .clear();
         },
         _setupListeners: function () {
-            this._app.popup.events
-                .add('load', this._onImageLoad, this)
-                .add('error', this._onImageError, this);
+            this._app.popup
+                .events
+                    .add('load', this._onImageLoad, this)
+                    .add('loaderchange', this._onLoaderChange, this)
+                    .add('error', this._onImageError, this);
         },
         _clearListeners: function () {
-            this._app.popup.events
-                .remove('load', this._onImageLoad, this)
-                .remove('error', this._onImageError, this);
+            this._app.popup
+                .events
+                    .remove('error', this._onImageError, this)
+                    .remove('loaderchange', this._onLoaderChange, this)
+                    .remove('load', this._onImageLoad, this);
         },
         _onImageLoad: function (e) {
             var app = this._app,
@@ -58,12 +63,16 @@ modules.define('app-state-image-load', [
 
             app.popup
                 .clear()
-                .render('popup#alert', {
-                    content: e.message
+                .render('alert', {
+                    content: e.get('message')
                 })
                 .events
                     .add('cancel', function () {
                     });
+        },
+        _onLoaderChange: function (e) {
+            this._app.popup
+                .render(e.get('loader') + 'ImageLoader');
         }
     });
 

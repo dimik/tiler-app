@@ -18,7 +18,7 @@ modules.define('ymaps-layout-file-image-loader', [
                     '</a>',
                 '</div>',
                 '<div class="ya-fotki-control-group">',
-                    '<a class="btn btn-success" href="#" data-loader="image">Выбрать&nbsp;на&nbsp;Яндекс.Фотках</a>',
+                    '<a class="btn btn-success" href="#" data-loader="fotki">Выбрать&nbsp;на&nbsp;Яндекс.Фотках</a>',
                 '</div>',
             '</div>',
             '<input type="file" class="input-file-hidden" name="image-file"></input>',
@@ -91,8 +91,13 @@ modules.define('ymaps-layout-file-image-loader', [
         _onLoaderSelect: function (e) {
             e.preventDefault();
 
-            this.getData().control.state
-                .set('loader', jQuery(e.target).data('loader'));
+            var control = this.getData().control;
+
+            control.events
+                .fire('loaderchange', {
+                    target: control,
+                    loader: jQuery(e.target).data('loader')
+                });
         },
         _onFileOpen: function (e) {
             e.preventDefault();

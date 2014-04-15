@@ -9,12 +9,11 @@ modules.define('map-view-popup', [
         __constructor: function () {
             this.events = new ymaps.event.Manager();
 
-            map.controls.add(
-                this._control = this._createControl()
-            );
+            this._name = 'popup';
+            this._control = this._createControl();
         },
         render: function (preset, data) {
-            this.setPreset(preset)
+            this.setPreset(this._name + '#' + preset)
                 .setData(data);
 
             return this;
@@ -22,16 +21,6 @@ modules.define('map-view-popup', [
         clear: function () {
             this.clearPreset()
                 .clearData();
-
-            return this;
-        },
-        listen: function (events) {
-            this._setupListeners(events);
-
-            return this;
-        },
-        unlisten: function () {
-            this._clearListeners();
 
             return this;
         },
@@ -73,26 +62,13 @@ modules.define('map-view-popup', [
 
             return this;
         },
-        _createControl: function (data, options) {
-            return new CenteredControl({
-                data: data,
-                options: {
-                    float: 'none'
-                }
-            });
-        },
-        _setupListeners: function (events) {
-            this._listeners = this._control.events.group()
-                .add(events, this._onEvent, this);
-        },
-        _clearListeners: function () {
-            if(this._listeners) {
-                this._listeners.removeAll();
-                this._listeners = null;
-            }
-        },
-        _onEvent: function (e) {
-            this.events.fire(e.get('type'), e);
+        _createControl: function () {
+            var control = new CenteredControl();
+
+            control.events.setParent(this.events);
+            map.controls.add(control);
+
+            return control;
         }
     });
 

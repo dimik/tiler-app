@@ -32,7 +32,7 @@ modules.define('app-state-user-auth', [
             }
             else {
                 this._app.popup
-                    .render('popup#userAuth');
+                    .render('userAuth');
             }
         },
         destroy: function () {
