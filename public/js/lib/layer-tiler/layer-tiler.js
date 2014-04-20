@@ -103,7 +103,7 @@ modules.define('layer-tiler', [
                 defer = vow.defer();
 
             source.getTile(x, y, zoom)
-                .save(config.get('output'), x, y, zoom)
+                .save(path.join(config.get('output'), zoom.toString(10)), x, y, zoom)
                 .done(function (res) {
                     defer.notify(util.format('rendering tile: zoom=%s, x=%s, y=%s', zoom, x, y));
                     defer.resolve(res);
