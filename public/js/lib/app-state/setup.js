@@ -1,9 +1,9 @@
 modules.define('app-state-setup', [
     'inherit',
-    'jquery',
+    'ymaps',
     'app-state-base',
     'ymaps-layout-layer-setup'
-], function (provide, inherit, jQuery, AppStateBase, LayerSetupLayout) {
+], function (provide, inherit, ymaps, AppStateBase, LayerSetupLayout) {
 
     var SetupState = inherit(AppStateBase, {
         __constructor: function () {
@@ -16,7 +16,9 @@ modules.define('app-state-setup', [
 
             this._setupListeners();
             app.sidebar
-                .render('layerSetup', app.options.getAll());
+                .render('layerSetup', ymaps.util.extend({}, {
+                    acceptedMimes: this._getAcceptedMimes()
+                }, app.options.getAll()));
             app.renderSourceLayer();
         },
         destroy: function () {
@@ -40,10 +42,19 @@ modules.define('app-state-setup', [
             this._changeState('process');
         },
         _onSetupChange: function (e) {
-            this._app.options.set(e.get('settings'));
+            this._app.options
+                .set(e.get('name'), e.get('value'));
         },
         _onSetupCancel: function (e) {
             this._changeState('load');
+        },
+        _getAcceptedMimes: function () {
+            var mimes = ['png', 'jpeg', 'gif', 'bmp', 'tiff'],
+                canvas = document.createElement('canvas');
+
+            return mimes.filter(function (mime) {
+                return canvas.toDataURL('image/' + mime).search(mime) >= 0;
+            });
         }
     });
 

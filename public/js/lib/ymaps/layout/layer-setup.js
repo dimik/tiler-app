@@ -25,11 +25,13 @@ modules.define('ymaps-layout-layer-setup', [
                         '<input type="text" name="layerMaxZoom" id="layerMaxZoom" value="{{ data.layerMaxZoom }}" class="span2"/>',
                     '</div>',
                 '</div>',
+                /*
                 '<div class="control-group">',
                     '<label class="checkbox">',
                         '<input type="checkbox" name="georeferenced" {% if data.georeferenced %}checked{% endif %}>Геопривязанный слой',
                     '</label>',
                 '</div>',
+                */
 
                 '{% include options.tileTypeLayout %}',
 
@@ -84,8 +86,7 @@ modules.define('ymaps-layout-layer-setup', [
 
             control.state.set('submitted', true);
             control.events.fire('submit', {
-                target: control,
-                settings: this._getSettings()
+                target: control
             });
         },
         _onReset: function (e) {
@@ -101,19 +102,14 @@ modules.define('ymaps-layout-layer-setup', [
         _onChange: function (e) {
             e.preventDefault();
 
-            var control = this.getData().control;
+            var control = this.getData().control,
+                field = jQuery(e.target);
 
             control.events.fire('change', {
                 target: control,
-                settings: this._getSettings()
+                name: field.attr('name'),
+                value: field.val()
             });
-        },
-        _getSettings: function () {
-            return this._$element.find('input').serializeArray()
-                .reduce(function (data, field, index) {
-                    data[field.name] = field.value;
-                    return data;
-                }, {});
         }
     });
 

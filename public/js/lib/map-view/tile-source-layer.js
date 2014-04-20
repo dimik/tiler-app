@@ -5,19 +5,21 @@ modules.define('map-view-tile-source-layer', [
     'app-config'
 ], function (provide, inherit, ymaps, map, config) {
 
+    var layerName = 'user#map';
+
     var TileSourceLayerMapView = inherit({
         __constructor: function () {
             this._layer = null;
         },
         render: function (tileSource) {
             this._layer = this._createLayer(tileSource);
-            ymaps.layer.storage.add(config.get('tilerOutput'), this._layer);
+            ymaps.layer.storage.add(layerName, this._layer);
 
             this._mapType = this._createMapType();
-            ymaps.mapType.storage.add(config.get('tilerOutput'), this._mapType);
+            ymaps.mapType.storage.add(layerName, this._mapType);
 
             map.options.set('projection', this._createProjection());
-            map.setType(config.get('tilerOutput'));
+            map.setType(layerName);
             map.setCenter([0, 0], tileSource.getMaxZoom());
 
             return this;
@@ -31,56 +33,54 @@ modules.define('map-view-tile-source-layer', [
             return new ymaps.projection.Cartesian([[-10, -10], [10, 10]], [false, false]);
         },
         _createLayer: function (tileSource) {
+            var zoomRange = [tileSource.getMinZoom(), tileSource.getMaxZoom()],
+                monitor = new ymaps.Monitor(config),
+                layer = new ymaps.Layer(''),
+                update = function () {
+                    layer.events.fire('zoomrangechange');
+                    layer.update();
+                };
 
-            return function () {
-                var layer = new ymaps.Layer('');
+            monitor
+                .add('layerMinZoom', function (minZoom) {
+                    zoomRange[0] = minZoom;
+                    update();
+                })
+                .add('layerMaxZoom', function (maxZoom, oldMaxZoom) {
+                    zoomRange[1] = maxZoom;
+                    update();
 
-                layer.getTileUrl = function (tileNumber, tileZoom) {
-                    tileNumber = this.restrict(tileNumber, tileZoom);
-
-                    if(tileNumber) {
-                        var tile = tileSource.getTile(tileNumber[0], tileNumber[1], tileZoom);
-
-                        if(tile) {
-                            return tile.toDataURL(config.get('tileType'));
-                        }
+                    if(oldMaxZoom > maxZoom && map.getZoom() > maxZoom) {
+                        map.setZoom(maxZoom);
                     }
-
-                    return null;
-                };
-
-                layer.getZoomRange = function () {
-                    var defer = new ymaps.vow.Deferred();
-
-                    defer.resolve([tileSource.getMinZoom(), tileSource.getMaxZoom()]);
-
-                    return defer.promise();
-                };
-
-                var monitor = new ymaps.Monitor(config);
-                var sourceMonitor = new ymaps.Monitor(tileSource.options);
-
-                sourceMonitor.add(['type', 'color'], function () {
-                    console.log('!!!!', arguments);
+                })
+                .add(['tileType', 'tileColor'], function () {
+                    layer.update();
                 });
 
-                monitor
-                    .add(['layerMinZoom', 'layerMaxZoom'], function () {
-                        console.log('zoomrangechange', arguments);
-                        layer.events.fire('zoomrangechange');
-                        layer.update();
-                        /*
-                        if(oldMaxZoom > maxZoom && map.getZoom() > maxZoom) {
-                            map.setZoom(maxZoom);
-                        }
-                        */
-                    })
-                    .add(['tileType', 'tileColor'], function () {
-                        console.log('tiles options change', arguments);
-                        layer.update();
-                    });
+            layer.getTileUrl = function (tileNumber, tileZoom) {
+                tileNumber = this.restrict(tileNumber, tileZoom);
 
+                if(tileNumber) {
+                    var tile = tileSource.getTile(tileNumber[0], tileNumber[1], tileZoom);
 
+                    if(tile) {
+                        return tile.toDataURL(config.get('tileType'));
+                    }
+                }
+
+                return null;
+            };
+
+            layer.getZoomRange = function () {
+                var defer = ymaps.vow.defer();
+
+                defer.resolve(zoomRange);
+
+                return defer.promise();
+            };
+
+            return function () {
                 return layer;
             };
         },
@@ -88,7 +88,7 @@ modules.define('map-view-tile-source-layer', [
             var layers = /*options.backgroundMapType?
                     ymaps.mapType.storage.get(options.backgroundMapType).getLayers() : */[];
 
-            return new ymaps.MapType(config.get('tilerOutput'), layers.concat([config.get('tilerOutput')]));
+            return new ymaps.MapType(layerName, layers.concat([layerName]));
         }
     });
 
