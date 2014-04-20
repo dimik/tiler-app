@@ -53,7 +53,7 @@ modules.define('layer-tiler', [
                     return Math.round(num * 100 / tasks.length);
                 };
 
-            enqueue(this._createFolder.bind(output), 3, 10);
+            enqueue(this._createFolder.bind(this, output), 3, 10);
 
             for(var zoom = maxZoom; zoom >= minZoom; zoom--) {
                 var tilesCount = source.getTilesNumberAtZoom(zoom),

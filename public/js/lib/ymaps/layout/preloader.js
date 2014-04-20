@@ -12,5 +12,10 @@ modules.define('ymaps-layout-preloader', [
         '</div>'
     ].join(''));
 
+    ymaps.option.presetStorage
+        .add('popup#preloader', {
+            contentBodyLayout: PreloaderLayout
+        });
+
     provide(PreloaderLayout);
 });

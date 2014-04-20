@@ -1,8 +1,9 @@
 modules.define('app-state-layer-setup', [
     'inherit',
     'jquery',
-    'app-state-base'
-], function (provide, inherit, jQuery, AppStateBase) {
+    'app-state-base',
+    'ymaps-layout-layer-settings'
+], function (provide, inherit, jQuery, AppStateBase, LayerSettingsLayout) {
 
     var LayerSetupState = inherit(AppStateBase, {
         __constructor: function () {
@@ -13,29 +14,33 @@ modules.define('app-state-layer-setup', [
         init: function () {
             var app = this._app;
 
-            this._attachHandlers();
-            app.sidebar.render(app.options.getAll());
+            this._setupListeners();
+            app.sidebar
+                .render('setup', app.options.getAll());
             app.renderSourceLayer();
         },
         destroy: function () {
-            this._detachHandlers();
-            this._app.sidebar.clear();
+            this._clearListeners();
+            this._app.sidebar
+                .clear();
         },
-        _attachHandlers: function () {
-            this._app.sidebar.events.on({
-                submit: jQuery.proxy(this._onSetupSubmit, this),
-                change: jQuery.proxy(this._onSetupChange, this),
-                cancel: jQuery.proxy(this._onSetupCancel, this)
-            });
+        _setupListeners: function () {
+            this._app.sidebar.events
+                .add('submit', this._onSetupSubmit, this)
+                .add('change', this._onSetupChange, this)
+                .add('cancel', this._onSetupCancel, this);
         },
-        _detachHandlers: function () {
-            this._app.sidebar.events.off();
+        _clearListeners: function () {
+            this._app.sidebar.events
+                .remove('submit', this._onSetupSubmit, this)
+                .remove('change', this._onSetupChange, this)
+                .remove('cancel', this._onSetupCancel, this);
         },
         _onSetupSubmit: function (e) {
             this._changeState('layer-process');
         },
         _onSetupChange: function (e) {
-            this._app.options.set(e.settings);
+            this._app.options.set(e.get('settings'));
         },
         _onSetupCancel: function (e) {
             this._changeState('image-load');

@@ -1,8 +1,9 @@
 modules.define('app-state-layer-process', [
     'inherit',
     'jquery',
-    'app-state-base'
-], function (provide, inherit, jQuery, AppStateBase) {
+    'app-state-base',
+    'ymaps-layout-preloader'
+], function (provide, inherit, jQuery, AppStateBase, PreloaderLayout) {
 
     var LayerProcessState = inherit(AppStateBase, {
         __contructor: function () {
@@ -13,11 +14,12 @@ modules.define('app-state-layer-process', [
         init: function () {
             var app = this._app;
 
-            this._attachHandlers();
+            this._setupListeners();
 
-            app.preloader.render({
-                progress: 0
-            });
+            this._app.popup
+                .render('preloader', {
+                    progress: 0
+                });
 
             app.tiler
                 .render()
@@ -29,31 +31,35 @@ modules.define('app-state-layer-process', [
                 );
         },
         destroy: function () {
-            this._app.preloader.clear();
-            this._detachHandlers();
+            this._app.popup
+                .clear();
+            this._clearListeners();
         },
-        _attachHandlers: function () {
-            this._app.sidebar.events.on({
-                cancel: jQuery.proxy(this._onProcessCancel, this)
-            });
+        _setupListeners: function () {
+            this._app.sidebar.events
+                .add('cancel', this._onProcessCancel, this);
         },
-        _detachHandlers: function () {
-            this._app.sidebar.events.off();
+        _clearListeners: function () {
+            this._app.sidebar.events
+                .remove('cancel', this._onProcessCancel, this);
         },
         _onComplete: function (res) {
             this._changeState('layer-code');
         },
         _onProgress: function (v) {
-            this._app.preloader.render(v);
+            this._app.popup
+                .setData(v);
         },
         _onError: function (err) {
             var message = err.status?
                 err.status + ' ' + err.statusText : err.message;
 
-            this._app.preloader.clear();
-            this._app.popup.render({
-                content: message
-            });
+            this._app.popup
+                .clear()
+                .render('alert', {
+                    content: message
+                });
+
             this._changeState('layer-setup');
         },
         _onCancel: function (e) {

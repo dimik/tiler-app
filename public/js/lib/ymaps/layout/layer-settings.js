@@ -1,7 +1,10 @@
 modules.define('ymaps-layout-layer-settings', [
     'ymaps',
-    'jquery'
-], function (provide, ymaps, jQuery) {
+    'jquery',
+    'ymaps-layout-image-status',
+    'ymaps-layout-tile-type',
+    'ymaps-layout-tile-color'
+], function (provide, ymaps, jQuery, ImageStatusLayout, TileTypeLayout, TileColorLayout) {
 
     var LayerSettingsLayout = ymaps.templateLayoutFactory.createClass([
         '<div class="well well-white layer-settings">',
@@ -46,14 +49,14 @@ modules.define('ymaps-layout-layer-settings', [
 
             this._$element = jQuery(this.getElement());
 
-            this._attachHandlers();
+            this._setupListeners();
         },
         clear: function () {
-            this._detachHandlers();
+            this._clearListeners();
 
             LayerSettingsLayout.superclass.clear.apply(this, arguments);
         },
-        _attachHandlers: function () {
+        _setupListeners: function () {
             this._$element.find('input')
                 .on('change', jQuery.proxy(this._onChange, this));
 
@@ -63,7 +66,7 @@ modules.define('ymaps-layout-layer-settings', [
             this._$element.find(':reset')
                 .on('click', jQuery.proxy(this._onReset, this));
         },
-        _detachHandlers: function () {
+        _clearListeners: function () {
             if(this._$element) {
                 this._$element.find('input')
                     .off('change');
@@ -115,6 +118,14 @@ modules.define('ymaps-layout-layer-settings', [
                 }, {});
         }
     });
+
+    ymaps.option.presetStorage
+        .add('sidebar#setup', {
+            contentBodyLayout: LayerSettingsLayout,
+            imageStatusLayout: ImageStatusLayout,
+            tileTypeLayout: TileTypeLayout,
+            tileColorLayout: TileColorLayout
+        });
 
     provide(LayerSettingsLayout);
 });

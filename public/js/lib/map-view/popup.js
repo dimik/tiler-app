@@ -1,69 +1,18 @@
 modules.define('map-view-popup', [
     'inherit',
-    'ymaps',
+    'map-view-base',
     'ymaps-map',
     'ymaps-control-centered'
-], function (provide, inherit, ymaps, map, CenteredControl) {
+], function (provide, inherit, BaseMapView, map, CenteredControl) {
 
-    var PopupMapView = inherit({
+    var PopupMapView = inherit(BaseMapView, {
         __constructor: function () {
-            this.events = new ymaps.event.Manager();
+            this.__base.apply(this, arguments);
 
             this._name = 'popup';
-            this._control = this._createControl();
         },
-        render: function (preset, data) {
-            this.setPreset(this._name + '#' + preset)
-                .setData(data);
-
-            return this;
-        },
-        clear: function () {
-            this.clearPreset()
-                .clearData();
-
-            return this;
-        },
-        show: function () {
-            this._control.options
-                .set('visible', true);
-
-            return this;
-        },
-        hide: function () {
-            this._control.options
-                .set('visible', false);
-
-            return this;
-        },
-        setPreset: function (preset) {
-            this._control.options
-                .set('preset', preset);
-
-            return this;
-        },
-        clearPreset: function () {
-            this._control.options
-                .unset('preset');
-
-            return this;
-        },
-        setData: function (data) {
-            if(data) {
-                this._control.data
-                    .set(data);
-            }
-
-            return this;
-        },
-        clearData: function () {
-            this._control.data
-                .unsetAll();
-
-            return this;
-        },
-        _createControl: function () {
-            var control = new CenteredControl();
+        _createControl: function (params) {
+            var control = new CenteredControl(params);
 
             map.controls.add(control);
             control.events.setParent(this.events);
