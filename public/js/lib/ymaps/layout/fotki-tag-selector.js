@@ -12,22 +12,22 @@ modules.define('ymaps-layout-fotki-tag-selector', [
         '</select>'
     ].join(''), {
         build: function () {
-            this.constructor.superclass.build.apply(this, arguments);
+            FotkiTagSelectorLayout.superclass.build.apply(this, arguments);
 
             this._$element = jQuery(this.getElement());
 
-            this._attachHandlers();
+            this._setupListeners();
         },
         clear: function () {
-            this._detachHandlers();
+            this._clearListeners();
 
-            this.constructor.superclass.clear.apply(this, arguments);
+            FotkiTagSelectorLayout.superclass.clear.apply(this, arguments);
         },
-        _attachHandlers: function () {
+        _setupListeners: function () {
             this._$element
                 .on('change', jQuery.proxy(this._onChange, this));
         },
-        _detachHandlers: function () {
+        _clearListeners: function () {
             this._$element
                 .off();
         },

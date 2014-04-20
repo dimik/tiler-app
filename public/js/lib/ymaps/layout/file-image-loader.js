@@ -29,14 +29,14 @@ modules.define('ymaps-layout-file-image-loader', [
 
             this._$element = jQuery(this.getElement());
 
-            this._attachHandlers();
+            this._setupListeners();
         },
         clear: function () {
-            this._detachHandlers();
+            this._clearListeners();
 
             FileImageLoaderLayout.superclass.build.apply(this, arguments);
         },
-        _attachHandlers: function () {
+        _setupListeners: function () {
             jQuery(document)
                 .on('dragover', jQuery.proxy(this._onDragOver, this))
                 .on('drop', jQuery.proxy(this._onDrop, this))
@@ -46,7 +46,7 @@ modules.define('ymaps-layout-file-image-loader', [
                 .on('click', '.btn-info', jQuery.proxy(this._onFileOpen, this))
                 .on('click', '.btn-success', jQuery.proxy(this._onLoaderSelect, this));
         },
-        _detachHandlers: function () {
+        _clearListeners: function () {
             this._$element
                 .off('click', '.btn-info')
                 .off('click', '.btn-success');

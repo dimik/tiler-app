@@ -16,7 +16,7 @@ modules.define('ymaps-layout-tile-color', [
         '</div>'
     ].join(''), {
         build: function () {
-            this.constructor.superclass.build.apply(this, arguments);
+            TileColorLayout.superclass.build.apply(this, arguments);
 
             this._$element = jQuery(this.getElement());
 
@@ -26,20 +26,20 @@ modules.define('ymaps-layout-tile-color', [
             this._timeout = 100;
             this._timeoutId = null;
 
-            this._attachHandlers();
+            this._setupListeners();
         },
         clear: function () {
-            this._detachHandlers();
+            this._clearListeners();
 
-            this.constructor.superclass.clear.apply(this, arguments);
+            TileColorLayout.superclass.clear.apply(this, arguments);
         },
-        _attachHandlers: function () {
+        _setupListeners: function () {
             this._$element
                 .on('changeColor', jQuery.proxy(this._onChangeColor, this));
             this._monitor
                 .add('tileType', this._onTileTypeChange, this);
         },
-        _detachHandlers: function () {
+        _clearListeners: function () {
             this._monitor
                 .removeAll();
             if(this._$element) {

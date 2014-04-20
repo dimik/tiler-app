@@ -11,14 +11,14 @@ modules.define('app-state-layer-code', [
             this._name = 'layer-code';
         },
         init: function () {
-            this._attachHandlers();
+            this._setupListeners();
         },
         destroy: function () {
-            this._detachHandlers();
+            this._clearListeners();
         },
-        _attachHandlers: function () {
+        _setupListeners: function () {
         },
-        _detachHandlers: function () {
+        _clearListeners: function () {
         }
     });
 

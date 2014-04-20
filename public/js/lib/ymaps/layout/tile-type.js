@@ -20,23 +20,23 @@ modules.define('ymaps-layout-tile-type', [
         '</div>'
     ].join(''), {
         build: function () {
-            this.constructor.superclass.build.apply(this, arguments);
+            TileTypeLayout.superclass.build.apply(this, arguments);
 
             this._$element = jQuery(this.getElement());
             this._setTileType(this.getData().data.get('tileType'));
 
-            this._attachHandlers();
+            this._setupListeners();
         },
         clear: function () {
-            this._detachHandlers();
+            this._clearListeners();
 
-            this.constructor.superclass.clear.apply(this, arguments);
+            TileTypeLayout.superclass.clear.apply(this, arguments);
         },
-        _attachHandlers: function () {
+        _setupListeners: function () {
             this._$element
                 .on('change', jQuery.proxy(this._onChange, this));
         },
-        _detachHandlers: function () {
+        _clearListeners: function () {
             if(this._$element) {
                 this._$element
                     .off('change');

@@ -35,19 +35,19 @@ modules.define('ymaps-layout-fotki-photo-list', [
            FotkiPhotoListLayout.superclass.build.apply(this, arguments);
 
             this._$element = jQuery(this.getElement());
-            this._attachHandlers();
+            this._setupListeners();
         },
         clear: function () {
-            this._detachHandlers();
+            this._clearListeners();
 
             FotkiPhotoListLayout.superclass.clear.apply(this, arguments);
         },
-       _attachHandlers: function () {
+       _setupListeners: function () {
             this._$element
                 .on('click', '.thumbnail', jQuery.proxy(this._onImageSelect, this))
                 .on('click', '.btn', jQuery.proxy(this._onMoreImages, this));
         },
-        _detachHandlers: function () {
+        _clearListeners: function () {
             this._$element
                 .off();
         },
