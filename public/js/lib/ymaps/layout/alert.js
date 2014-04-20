@@ -40,5 +40,10 @@ modules.define('ymaps-layout-alert', [
         }
     });
 
+    ymaps.option.presetStorage
+        .add('popup#alert', {
+            contentBodyLayout: AlertLayout
+        });
+
     provide(AlertLayout);
 });

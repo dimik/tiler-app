@@ -24,7 +24,7 @@ modules.define('ymaps-layout-fotki-image-loader', [
 
                 '</form>',
             '</div>',
-            '<div id="container" class="row-fluid" style="height:400px;overflow:scroll;">',
+            '<div class="row-fluid" style="height:400px;overflow:scroll;">',
 
                 '{% include options.photoListLayout %}',
 
@@ -38,14 +38,14 @@ modules.define('ymaps-layout-fotki-image-loader', [
             this._stateMonitor = new ymaps.Monitor(this.getData().control.state);
             this._client = new YandexFotkiClient();
             this._loadData();
-            this._attachHandlers();
+            this._setupListeners();
         },
         clear: function () {
-            this._detachHandlers();
+            this._clearListeners();
 
             FotkiImageLoaderLayout.superclass.clear.apply(this, arguments);
         },
-        _attachHandlers: function () {
+        _setupListeners: function () {
             this._stateMonitor
                 .add('album', this._onAlbumChange, this)
                 .add('tag', this._onTagChange, this)
@@ -54,7 +54,7 @@ modules.define('ymaps-layout-fotki-image-loader', [
             this._$element
                 .on('click', '.close', jQuery.proxy(this._onLoaderSelect, this));
         },
-        _detachHandlers: function () {
+        _clearListeners: function () {
             this._$element
                 .off();
             this._stateMonitor
