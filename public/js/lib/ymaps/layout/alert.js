@@ -4,7 +4,7 @@ modules.define('ymaps-layout-alert', [
 ], function (provide, ymaps, jQuery) {
 
     var AlertLayout = ymaps.templateLayoutFactory.createClass([
-        '<div class="alert alert-block alert-{{ options.priority|default:"error" }}">',
+        '<div class="well well-white popup-alert">',
             '<a href="#" class="close">&times;</a>',
             '<p>{{ data.content|raw }}</p>',
         '</div>'
@@ -19,7 +19,7 @@ modules.define('ymaps-layout-alert', [
         clear: function () {
             this._clearListeners();
 
-            AlertLayout.superclass.build.apply(this, arguments);
+            AlertLayout.superclass.clear.apply(this, arguments);
         },
         _setupListeners: function () {
             this._$element
@@ -35,7 +35,7 @@ modules.define('ymaps-layout-alert', [
             var control = this.getData().control;
 
             control.events.fire('cancel', {
-                target: control,
+                target: control
             });
         }
     });

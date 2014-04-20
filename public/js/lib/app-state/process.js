@@ -37,12 +37,18 @@ modules.define('app-state-process', [
             this._clearListeners();
         },
         _setupListeners: function () {
-            this._app.sidebar.events
-                .add('cancel', this._onProcessCancel, this);
+            var app = this._app;
+
+            app.sidebar.events
+                .add('cancel', this._onSetupCancel, this);
+
+            app.popup.events
+                .add('cancel', this._onCancel, this);
         },
         _clearListeners: function () {
             this._app.sidebar.events
-                .remove('cancel', this._onProcessCancel, this);
+                .remove('cancel', this._onSetupCancel, this);
+
         },
         _onComplete: function (res) {
             this._changeState('publish');
@@ -52,19 +58,23 @@ modules.define('app-state-process', [
                 .setData(v);
         },
         _onError: function (err) {
-            var message = err.status?
-                err.status + ' ' + err.statusText : err.message;
+            var app = this._app,
+                message = err.statusText || err.message;
 
-            this._app.popup
+            app.tiler
+                .cancel();
+
+            app.popup
                 .clear()
                 .render('alert', {
                     content: message
                 });
-
+        },
+        _onCancel: function () {
             this._changeState('setup');
         },
-        _onCancel: function (e) {
-            this._changeState('setup');
+        _onSetupCancel: function (e) {
+            this._changeState('load');
         }
     });
 

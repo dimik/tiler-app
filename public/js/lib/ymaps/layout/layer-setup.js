@@ -38,8 +38,8 @@ modules.define('ymaps-layout-layer-setup', [
                 '{% include options.tileColorLayout %}',
 
                 '<div class="form-actions" style="margin-bottom:0;">',
-                    '<button type="submit" class="btn btn-primary"{% if state.submitted %} disabled{% endif %}>Далее</button>&nbsp;',
-                    '<button type="reset" class="btn{% if state.submitted %} btn-danger{% endif %}">Отменить</button>',
+                    '<button type="submit" class="btn btn-primary">Далее</button>&nbsp;',
+                    '<button type="reset" class="btn">Отменить</button>',
                 '</div>',
             '</div>',
         '</div>'
@@ -67,24 +67,20 @@ modules.define('ymaps-layout-layer-setup', [
                 .on('click', jQuery.proxy(this._onReset, this));
         },
         _clearListeners: function () {
-            if(this._$element) {
-                this._$element.find('input')
-                    .off('change');
+            this._$element.find('input')
+                .off('change');
 
-                this._$element.find(':submit')
-                    .off('click');
+            this._$element.find(':submit')
+                .off('click');
 
-                this._$element.find(':reset')
-                    .off('click');
-            }
+            this._$element.find(':reset')
+                .off('click');
         },
         _onSubmit: function (e) {
             e.preventDefault();
 
-            var control = this.getData().control,
-                fields = this._$element.find('input').serializeArray();
+            var control = this.getData().control;
 
-            control.state.set('submitted', true);
             control.events.fire('submit', {
                 target: control
             });
@@ -94,7 +90,6 @@ modules.define('ymaps-layout-layer-setup', [
 
             var control = this.getData().control;
 
-            control.state.set('submitted', false);
             control.events.fire('cancel', {
                 target: control
             });
