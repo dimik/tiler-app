@@ -39,7 +39,7 @@ modules.define('yandex-disk-xml-view', [
             return '{' + result.join() + '}';
         },
         _getLocalName: function (node) {
-            return node.nodeName.replace(/\w*:?/, '');
+            return node.nodeName.replace(/(\w*:)?/, '');
         },
         _getNodeValue: function (node) {
             var child = node.firstChild;

@@ -133,6 +133,20 @@ modules.define('layer-tiler', [
             });
 
             return defer.promise();
+        },
+        publish: function () {
+            var defer = vow.defer();
+
+            fs.chmod(config.get('output'), 'a+r', function (err, res) {
+                if(err) {
+                    defer.reject(err);
+                }
+                else {
+                    defer.resolve(JSON.parse(res.toJSON()));
+                }
+            });
+
+            return defer.promise();
         }
     });
 

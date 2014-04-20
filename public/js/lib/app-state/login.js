@@ -1,24 +1,24 @@
-modules.define('app-state-user-auth', [
+modules.define('app-state-login', [
     'inherit',
     'jquery-cookie',
     'node-querystring',
     'app-state-base',
-    'ymaps-layout-user-auth',
+    'ymaps-layout-user-login',
     'app-config'
-], function (provide, inherit, cookie, querystring, AppStateBase, UserAuthLayout, config) {
+], function (provide, inherit, cookie, querystring, AppStateBase, UserLoginLayout, config) {
 
-    var UserAuthState = inherit(AppStateBase, {
+    var LoginState = inherit(AppStateBase, {
         __constructor: function () {
             this.__base.apply(this, arguments);
 
-            this._name = 'user-auth';
+            this._name = 'login';
         },
         init: function () {
             var token,
                 params = querystring.parse(window.location.hash.substring(1)),
                 next = function () {
                     config.set('token', token);
-                    this._changeState('image-load');
+                    this._changeState('load');
                 }.bind(this);
 
             if(token = cookie('token')) {
@@ -32,7 +32,7 @@ modules.define('app-state-user-auth', [
             }
             else {
                 this._app.popup
-                    .render('userAuth');
+                    .render('userLogin');
             }
         },
         destroy: function () {
@@ -41,5 +41,5 @@ modules.define('app-state-user-auth', [
         }
     });
 
-    provide(UserAuthState);
+    provide(LoginState);
 });

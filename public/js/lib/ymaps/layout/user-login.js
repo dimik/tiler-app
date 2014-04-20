@@ -1,10 +1,10 @@
-modules.define('ymaps-layout-user-auth', [
+modules.define('ymaps-layout-user-login', [
     'ymaps',
     'jquery'
 ], function (provide, ymaps, jQuery) {
 
-    var UserAuthLayout = ymaps.templateLayoutFactory.createClass([
-        '<div class="well well-white user-auth">',
+    var UserLoginLayout = ymaps.templateLayoutFactory.createClass([
+        '<div class="well well-white user-login">',
             '<h1>Подготовка слоя тайлов</h1>',
             '<p class="lead">Приложение &laquo;Подготовка слоя тайлов&raquo; позволяет автоматизировать<br/>процесс подготовки произвольного изображения<br/>для показа на веб-странице с помощью <strong>API&nbsp;Яндекс.Карт</strong>.</p>',
             '<p class="lead">Приложение использует <strong>Яндекс.Диск</strong> в качестве сервиса<br/>хранения изображений&nbsp;(тайлов).</p>',
@@ -18,9 +18,9 @@ modules.define('ymaps-layout-user-auth', [
     ].join(''));
 
     ymaps.option.presetStorage
-        .add('popup#userAuth', {
-            contentBodyLayout: UserAuthLayout
+        .add('popup#userLogin', {
+            contentBodyLayout: UserLoginLayout
         });
 
-    provide(UserAuthLayout);
+    provide(UserLoginLayout);
 });

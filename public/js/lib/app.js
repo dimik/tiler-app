@@ -17,7 +17,7 @@ modules.define('app', [
             this._tileSourceLayer = new TileSourceLayerMapView();
             this._stateFactory = new AppStateFactory(this);
 
-            this.setState('user-auth');
+            this.setState('login');
         },
         setState: function (state) {
             this._state = this._stateFactory.create(state);
@@ -31,6 +31,9 @@ modules.define('app', [
             );
 
             return this;
+        },
+        publishLayer: function () {
+            return this.tiler.publish();
         }
     });
 

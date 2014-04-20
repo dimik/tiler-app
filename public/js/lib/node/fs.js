@@ -16,6 +16,12 @@ modules.define('node-fs', [
                 .then(function (res) {
                     fn(null, res);
                 }, fn);
+        },
+        chmod: function (path, mode, fn) {
+            disk.request('chmod', { path: path, mode: mode })
+                .then(function (res) {
+                    fn(null, res);
+                }, fn);
         }
     });
 });

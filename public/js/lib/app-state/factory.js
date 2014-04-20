@@ -1,21 +1,21 @@
 modules.define('app-state-factory', [
     'inherit',
-    'app-state-user-auth',
-    'app-state-image-load',
-    'app-state-layer-setup',
-    'app-state-layer-process',
-    'app-state-layer-code'
-], function (provide, inherit, UserAuthState, ImageLoadState, LayerSetupState, LayerProcessState, LayerCodeState) {
+    'app-state-login',
+    'app-state-load',
+    'app-state-setup',
+    'app-state-process',
+    'app-state-publish'
+], function (provide, inherit, LoginState, LoadState, SetupState, ProcessState, PublishState) {
 
     var StateFactory = inherit({
         __constructor: function (app) {
             this._app = app;
             this._states = {
-                "user-auth": UserAuthState,
-                "image-load": ImageLoadState,
-                "layer-setup": LayerSetupState,
-                "layer-process": LayerProcessState,
-                "layer-code": LayerCodeState
+                "login": LoginState,
+                "load": LoadState,
+                "setup": SetupState,
+                "process": ProcessState,
+                "publish": PublishState
             };
         },
         create: function (state) {

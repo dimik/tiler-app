@@ -1,22 +1,22 @@
-modules.define('app-state-layer-setup', [
+modules.define('app-state-setup', [
     'inherit',
     'jquery',
     'app-state-base',
-    'ymaps-layout-layer-settings'
-], function (provide, inherit, jQuery, AppStateBase, LayerSettingsLayout) {
+    'ymaps-layout-layer-setup'
+], function (provide, inherit, jQuery, AppStateBase, LayerSetupLayout) {
 
-    var LayerSetupState = inherit(AppStateBase, {
+    var SetupState = inherit(AppStateBase, {
         __constructor: function () {
             this.__base.apply(this, arguments);
 
-            this._name = 'layer-setup';
+            this._name = 'setup';
         },
         init: function () {
             var app = this._app;
 
             this._setupListeners();
             app.sidebar
-                .render('setup', app.options.getAll());
+                .render('layerSetup', app.options.getAll());
             app.renderSourceLayer();
         },
         destroy: function () {
@@ -37,15 +37,15 @@ modules.define('app-state-layer-setup', [
                 .remove('cancel', this._onSetupCancel, this);
         },
         _onSetupSubmit: function (e) {
-            this._changeState('layer-process');
+            this._changeState('process');
         },
         _onSetupChange: function (e) {
             this._app.options.set(e.get('settings'));
         },
         _onSetupCancel: function (e) {
-            this._changeState('image-load');
+            this._changeState('load');
         }
     });
 
-    provide(LayerSetupState);
+    provide(SetupState);
 });

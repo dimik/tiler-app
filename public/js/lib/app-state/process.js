@@ -1,15 +1,15 @@
-modules.define('app-state-layer-process', [
+modules.define('app-state-process', [
     'inherit',
     'jquery',
     'app-state-base',
     'ymaps-layout-preloader'
 ], function (provide, inherit, jQuery, AppStateBase, PreloaderLayout) {
 
-    var LayerProcessState = inherit(AppStateBase, {
+    var ProcessState = inherit(AppStateBase, {
         __contructor: function () {
             this.__base.apply(this, arguments);
 
-            this._name = 'layer-process';
+            this._name = 'process';
         },
         init: function () {
             var app = this._app;
@@ -18,7 +18,8 @@ modules.define('app-state-layer-process', [
 
             this._app.popup
                 .render('preloader', {
-                    progress: 0
+                    progress: 0,
+                    message: 'starting'
                 });
 
             app.tiler
@@ -44,7 +45,7 @@ modules.define('app-state-layer-process', [
                 .remove('cancel', this._onProcessCancel, this);
         },
         _onComplete: function (res) {
-            this._changeState('layer-code');
+            this._changeState('publish');
         },
         _onProgress: function (v) {
             this._app.popup
@@ -60,12 +61,12 @@ modules.define('app-state-layer-process', [
                     content: message
                 });
 
-            this._changeState('layer-setup');
+            this._changeState('setup');
         },
         _onCancel: function (e) {
-            this._changeState('layer-setup');
+            this._changeState('setup');
         }
     });
 
-    provide(LayerProcessState);
+    provide(ProcessState);
 });

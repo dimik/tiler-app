@@ -3,7 +3,7 @@ modules.define('ymaps-layout-preloader', [
 ], function (provide, ymaps) {
 
     var PreloaderLayout = ymaps.templateLayoutFactory.createClass([
-        '<div class="well preloader">',
+        '<div class="well well-white preloader">',
             '<p>{{ data.message }}</p>',
             '<div class="progress progress-striped active">',
                 '<div class="bar" style="width:{{ data.processed }}%;"></div>',

@@ -1,4 +1,4 @@
-modules.define('ymaps-layout-layer-settings', [
+modules.define('ymaps-layout-layer-setup', [
     'ymaps',
     'jquery',
     'ymaps-layout-image-status',
@@ -6,9 +6,8 @@ modules.define('ymaps-layout-layer-settings', [
     'ymaps-layout-tile-color'
 ], function (provide, ymaps, jQuery, ImageStatusLayout, TileTypeLayout, TileColorLayout) {
 
-    var LayerSettingsLayout = ymaps.templateLayoutFactory.createClass([
-        '<div class="well well-white layer-settings">',
-    //        '<form>',
+    var LayerSetupLayout = ymaps.templateLayoutFactory.createClass([
+        '<div class="well well-white layer-setup">',
             '<div class="row-fluid">',
 
                 '{% include options.imageStatusLayout %}',
@@ -41,11 +40,10 @@ modules.define('ymaps-layout-layer-settings', [
                     '<button type="reset" class="btn{% if state.submitted %} btn-danger{% endif %}">Отменить</button>',
                 '</div>',
             '</div>',
-    //        '</form>',
         '</div>'
     ].join(''), {
         build: function () {
-            LayerSettingsLayout.superclass.build.apply(this, arguments);
+            LayerSetupLayout.superclass.build.apply(this, arguments);
 
             this._$element = jQuery(this.getElement());
 
@@ -54,7 +52,7 @@ modules.define('ymaps-layout-layer-settings', [
         clear: function () {
             this._clearListeners();
 
-            LayerSettingsLayout.superclass.clear.apply(this, arguments);
+            LayerSetupLayout.superclass.clear.apply(this, arguments);
         },
         _setupListeners: function () {
             this._$element.find('input')
@@ -120,12 +118,12 @@ modules.define('ymaps-layout-layer-settings', [
     });
 
     ymaps.option.presetStorage
-        .add('sidebar#setup', {
-            contentBodyLayout: LayerSettingsLayout,
+        .add('sidebar#layerSetup', {
+            contentBodyLayout: LayerSetupLayout,
             imageStatusLayout: ImageStatusLayout,
             tileTypeLayout: TileTypeLayout,
             tileColorLayout: TileColorLayout
         });
 
-    provide(LayerSettingsLayout);
+    provide(LayerSetupLayout);
 });

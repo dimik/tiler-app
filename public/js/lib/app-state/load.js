@@ -1,4 +1,4 @@
-modules.define('app-state-image-load', [
+modules.define('app-state-load', [
     'inherit',
     'jquery',
     'app-state-base',
@@ -7,11 +7,11 @@ modules.define('app-state-image-load', [
     'ymaps-layout-alert'
 ], function (provide, inherit, jQuery, AppStateBase, FileImageLoaderLayout, FotkiImageLoaderLayout, AlertLayout) {
 
-    var ImageLoadState = inherit(AppStateBase, {
+    var LoadState = inherit(AppStateBase, {
         __constructor: function () {
             this.__base.apply(this, arguments);
 
-            this._name = 'image-load';
+            this._name = 'load';
         },
         init: function () {
             this._setupListeners();
@@ -55,7 +55,7 @@ modules.define('app-state-image-load', [
                         layerMinZoom: tileSource.getMinZoom(),
                         layerMaxZoom: tileSource.getMaxZoom()
                     });
-                    this._changeState('layer-setup');
+                    this._changeState('setup');
                 }, this);
         },
         _onImageError: function (e) {
@@ -76,5 +76,5 @@ modules.define('app-state-image-load', [
         }
     });
 
-    provide(ImageLoadState);
+    provide(LoadState);
 });
