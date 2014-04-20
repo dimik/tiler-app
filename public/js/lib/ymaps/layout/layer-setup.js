@@ -37,7 +37,7 @@ modules.define('ymaps-layout-layer-setup', [
 
                 '{% include options.tileColorLayout %}',
 
-                '<div class="form-actions">',
+                '<div class="form-actions" style="margin-bottom:0;">',
                     '<button type="submit" class="btn btn-primary"{% if state.submitted %} disabled{% endif %}>Далее</button>&nbsp;',
                     '<button type="reset" class="btn{% if state.submitted %} btn-danger{% endif %}">Отменить</button>',
                 '</div>',
