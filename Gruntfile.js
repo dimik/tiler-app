@@ -38,6 +38,7 @@ module.exports = function (grunt) {
                     '<%= tilerApp.app %>/js/node_modules/vow/lib/vow.js',
                     '<%= tilerApp.app %>/js/node_modules/vow-queue/lib/queue.js',
                     '<%= tilerApp.app %>/js/node_modules/inherit/lib/inherit.js',
+                    '<%= tilerApp.app %>/js/node_modules/jspath/lib/jspath.js',
                     '<%= tilerApp.app %>/js/lib/**/*.js',
                 ],
                 dest: '<%= tilerApp.app %>/js/project.js'
