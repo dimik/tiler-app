@@ -25,10 +25,15 @@ modules.define('app', [
         getTileSource: function () {
             return this.tiler.getTileSource();
         },
-        renderSourceLayer: function () {
+        addSourceLayer: function () {
             this._tileSourceLayer.render(
                 this.getTileSource()
             );
+
+            return this;
+        },
+        removeSourceLayer: function () {
+            this._tileSourceLayer.clear();
 
             return this;
         },

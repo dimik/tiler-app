@@ -12,6 +12,8 @@ modules.define('map-view-tile-source-layer', [
             this._layer = null;
         },
         render: function (tileSource) {
+            this._mapState = this._getMapState();
+
             this._layer = this._createLayer(tileSource);
             ymaps.layer.storage.add(layerName, this._layer);
 
@@ -25,9 +27,24 @@ modules.define('map-view-tile-source-layer', [
             return this;
         },
         clear: function () {
-            map.setType('yandex#map');
+            var state = this._mapState;
+
+            map.options.set('projection', state.projection);
+            map.setType(state.type);
+            map.setCenter(state.center, state.zoom);
+
+            ymaps.layer.storage.remove(layerName);
+            ymaps.mapType.storage.remove(layerName);
 
             return this;
+        },
+        _getMapState: function () {
+            return {
+                center: map.getCenter(),
+                zoom: map.getZoom(),
+                type: map.getType(),
+                projection: map.options.get('projection')
+            };
         },
         _createProjection: function () {
             return new ymaps.projection.Cartesian([[-10, -10], [10, 10]], [false, false]);

@@ -19,7 +19,7 @@ modules.define('app-state-setup', [
                 .render('layerSetup', ymaps.util.extend({}, {
                     acceptedMimes: this._getAcceptedMimes()
                 }, app.options.getAll()));
-            app.renderSourceLayer();
+            app.addSourceLayer();
         },
         destroy: function () {
             this._clearListeners();
@@ -46,6 +46,7 @@ modules.define('app-state-setup', [
                 .set(e.get('name'), e.get('value'));
         },
         _onSetupCancel: function (e) {
+            this._app.removeSourceLayer();
             this._changeState('load');
         },
         _getAcceptedMimes: function () {
