@@ -6,7 +6,7 @@ modules.define('app-config', [
         token: 'f9b2f399bb11407ebe09b70a4a94f046',
         tilerOutput: 'tiles-' + Date.now(),
 
-        tileUrlTemplate: '/%s/%s-%s.%s',
+        tileUrlTemplate: '/%s/%s/%s-%s.%s',
         tileSize: 256,
         tileType: 'image/png',
         tileColor: 'rgba(0,0,0,0.0)',

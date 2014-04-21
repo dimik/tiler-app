@@ -6,8 +6,9 @@ modules.define('layer-tiler', [
     'node-path',
     'node-fs',
     'vow-queue',
+    'layer-tiler-page-template',
     'layer-tiler-config'
-], function (provide, inherit, vow, TileSource, util, path, fs, Queue, config) {
+], function (provide, inherit, vow, TileSource, util, path, fs, Queue, PageTemplate, config) {
 
     /**
      * User-Map-Layer Tiler Class.
@@ -70,6 +71,8 @@ modules.define('layer-tiler', [
                 }
             }
 
+            enqueue(this._saveIndexPage.bind(this), 1, 1);
+
             queue.start();
 
             return vow.all(tasks)
@@ -103,7 +106,7 @@ modules.define('layer-tiler', [
                 defer = vow.defer();
 
             source.getTile(x, y, zoom)
-                .save(path.join(config.get('output'), zoom.toString(10)), x, y, zoom)
+                .save(config.get('output'), x, y, zoom)
                 .done(function (res) {
                     defer.notify(util.format('rendering tile: zoom=%s, x=%s, y=%s', zoom, x, y));
                     defer.resolve(res);
@@ -143,6 +146,27 @@ modules.define('layer-tiler', [
                 }
                 else {
                     defer.resolve(JSON.parse(res.toJSON()));
+                }
+            });
+
+            return defer.promise();
+        },
+        _saveIndexPage: function () {
+            var defer = vow.defer(),
+                source = this._source,
+                template = new PageTemplate(),
+                page = template.render({
+                    layerMinZoom: source.getMinZoom(),
+                    layerMaxZoom: source.getMaxZoom(),
+                    tileType: source.options.get('type').replace('image/', '')
+                });
+
+            fs.writeFile(path.join(config.get('output'), 'index.html'), page, function (err, res) {
+                if(err) {
+                    defer.reject(err);
+                }
+                else {
+                    defer.resolve(res);
                 }
             });
 

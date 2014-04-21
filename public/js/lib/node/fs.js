@@ -6,7 +6,7 @@ modules.define('node-fs', [
 
     provide({
         writeFile: function (path, buf, fn) {
-            disk.request('put', { path: path, file: buf, type: 'image/png' })
+            disk.request('put', { path: path, file: buf/*, type: 'image/png'*/ })
                 .then(function (res) {
                     fn(null, res);
                 }, fn);
