@@ -50,7 +50,7 @@ modules.define('app-state-setup', [
             this._changeState('load');
         },
         _getAcceptedMimes: function () {
-            var mimes = ['png', 'jpeg', 'gif', 'bmp', 'tiff'],
+            var mimes = ['png', 'jpeg', 'gif', 'tiff'/*, 'bmp'*/],
                 canvas = document.createElement('canvas');
 
             return mimes.filter(function (mime) {
