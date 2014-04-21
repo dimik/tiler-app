@@ -10,7 +10,7 @@ modules.define('ymaps-layout-layer-publish', [
             '<div class="row-fluid" style="padding-bottom: 20px;">',
                 '<p class="lead">Изображение сохранено</p>',
                 '<p>Вы можете скачать подготовленные файлы и&nbsp;разместить их на своем сайте.</p>',
-                '<p><a class="download" href="{{ data.url }}">Скачать с Яндекс.Диска</a></p>',
+                '<p><a target="_blank" class="download" href="{{ data.url }}">Скачать с Яндекс.Диска</a></p>',
             '</div>',
             '<div id="ya-share"></div>',
         '</div>'
