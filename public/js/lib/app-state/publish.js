@@ -31,8 +31,17 @@ modules.define('app-state-publish', [
                 .clear();
         },
         _setupListeners: function () {
+            var app = this._app;
+
+            app.popup.events
+                .add('cancel', this._onCancel, this);
         },
         _clearListeners: function () {
+            this._app.sidebar.events
+                .remove('cancel', this._onSetupCancel, this);
+        },
+        _onCancel: function () {
+            this._changeState('setup');
         }
     });
 

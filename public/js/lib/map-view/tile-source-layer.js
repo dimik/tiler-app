@@ -10,10 +10,9 @@ modules.define('map-view-tile-source-layer', [
     var TileSourceLayerMapView = inherit({
         __constructor: function () {
             this._layer = null;
+            this._mapState = this._getMapState();
         },
         render: function (tileSource) {
-            this._mapState = this._getMapState();
-
             this._layer = this._createLayer(tileSource);
             ymaps.layer.storage.add(layerName, this._layer);
 

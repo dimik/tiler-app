@@ -41,14 +41,16 @@ modules.define('app-state-process', [
 
             app.sidebar.events
                 .add('cancel', this._onSetupCancel, this);
-
             app.popup.events
                 .add('cancel', this._onCancel, this);
         },
         _clearListeners: function () {
-            this._app.sidebar.events
-                .remove('cancel', this._onSetupCancel, this);
+            var app = this._app;
 
+            app.popup.events
+                .remove('cancel', this._onCancel, this);
+            app.sidebar.events
+                .remove('cancel', this._onSetupCancel, this);
         },
         _onComplete: function (res) {
             this._changeState('publish');
