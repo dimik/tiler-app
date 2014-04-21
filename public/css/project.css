@@ -91,9 +91,6 @@ html, body {
 .page {
     padding: 0;
     height: 100%;
-    background-image: url("../header-bg.jpg");
-    background-position: 0 0;
-    background-repeat: no-repeat;
 }
 .control-group {
     margin-top: 20px;
