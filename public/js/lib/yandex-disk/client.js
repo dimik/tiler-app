@@ -16,7 +16,7 @@ modules.define('yandex-disk-client', [
         __constructor: function () {
             this.__base.call(this, config.get('home'));
 
-            this._model = new Model(config.get('token'));
+            this._model = new Model();
         },
         getModel: function () {
             return this._model;

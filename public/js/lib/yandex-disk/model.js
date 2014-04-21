@@ -6,7 +6,6 @@ modules.define('yandex-disk-model', [
 
     var Model = inherit({
         __constructor: function (token) {
-            this._token = token;
             this._methods = [ 'get', 'getPreview', 'put', 'cp', 'mv', 'rm', 'ls', 'mkdir', 'chmod', 'id', 'df' ];
         },
         get: function (options) {
@@ -153,7 +152,7 @@ modules.define('yandex-disk-model', [
         },
         getHeaders: function (headers) {
             return jQuery.extend({
-                Authorization: 'OAuth ' + this._token
+                Authorization: 'OAuth ' + config.get('token')
             }, headers);
         },
         isMethod: function (name) {
