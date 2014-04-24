@@ -159,12 +159,16 @@ modules.define('layer-tiler-tile-source', [
         },
         setMinZoom: function (minZoom) {
             this._minZoom = ~~minZoom;
+
+            return this;
         },
         getMaxZoom: function () {
             return this._maxZoom;
         },
         setMaxZoom: function (maxZoom) {
             this._maxZoom = ~~maxZoom;
+
+            return this;
         }
     });
 

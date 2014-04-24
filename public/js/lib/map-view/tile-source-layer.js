@@ -59,11 +59,11 @@ modules.define('map-view-tile-source-layer', [
 
             monitor
                 .add('layerMinZoom', function (minZoom) {
-                    zoomRange[0] = minZoom;
+                    zoomRange[0] = tileSource.setMinZoom(minZoom).getMinZoom();
                     update();
                 })
                 .add('layerMaxZoom', function (maxZoom, oldMaxZoom) {
-                    zoomRange[1] = maxZoom;
+                    zoomRange[1] = tileSource.setMaxZoom(maxZoom).getMaxZoom();
                     update();
 
                     if(oldMaxZoom > maxZoom && map.getZoom() > maxZoom) {
