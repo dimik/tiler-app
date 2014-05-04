@@ -7,26 +7,34 @@ modules.define('app-state-setup', [
 
     var SetupState = inherit(AppStateBase, {
         __constructor: function () {
-            this.__base.apply(this, arguments);
-
             this._name = 'setup';
+            this._title = 'Настройка параметров слоя';
+
+            this.__base.apply(this, arguments);
         },
         init: function () {
+            this.__base.call(this);
+
             var app = this._app;
 
-            this._setupListeners();
+            app.addSourceLayer();
             app.sidebar
                 .render('layerSetup', ymaps.util.extend({}, {
                     acceptedMimes: this._getAcceptedMimes()
                 }, app.options.getAll()));
-            app.addSourceLayer();
         },
         destroy: function () {
-            this._clearListeners();
-            this._app.sidebar
+            var app = this._app;
+
+            app.sidebar
                 .clear();
+            app.removeSourceLayer();
+
+            this.__base.call(this);
         },
         _setupListeners: function () {
+            this.__base.call(this);
+
             this._app.sidebar.events
                 .add('submit', this._onSetupSubmit, this)
                 .add('change', this._onSetupChange, this)
@@ -37,6 +45,8 @@ modules.define('app-state-setup', [
                 .remove('submit', this._onSetupSubmit, this)
                 .remove('change', this._onSetupChange, this)
                 .remove('cancel', this._onSetupCancel, this);
+
+            this.__base.call(this);
         },
         _onSetupSubmit: function (e) {
             this._changeState('process');
@@ -46,7 +56,6 @@ modules.define('app-state-setup', [
                 .set(e.get('name'), e.get('value'));
         },
         _onSetupCancel: function (e) {
-            this._app.removeSourceLayer();
             this._changeState('load');
         },
         _getAcceptedMimes: function () {

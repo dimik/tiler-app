@@ -7,16 +7,18 @@ modules.define('app-state-process', [
 
     var ProcessState = inherit(AppStateBase, {
         __contructor: function () {
-            this.__base.apply(this, arguments);
-
             this._name = 'process';
+            this._title = 'Обработка изображения';
+
+            this.__base.apply(this, arguments);
         },
         init: function () {
+            this.__base.call(this);
+
             var app = this._app;
 
-            this._setupListeners();
-
-            this._app.popup
+            app.addSourceLayer();
+            app.popup
                 .render('preloader', {
                     progress: 0,
                     message: 'starting'
@@ -32,11 +34,17 @@ modules.define('app-state-process', [
                 );
         },
         destroy: function () {
-            this._app.popup
+            var app = this._app;
+
+            app.popup
                 .clear();
-            this._clearListeners();
+            app.removeSourceLayer();
+
+            this.__base.call(this);
         },
         _setupListeners: function () {
+            this.__base.call(this);
+
             var app = this._app;
 
             app.sidebar.events
@@ -51,6 +59,8 @@ modules.define('app-state-process', [
                 .remove('cancel', this._onCancel, this);
             app.sidebar.events
                 .remove('cancel', this._onSetupCancel, this);
+
+            this.__base.call(this);
         },
         _onComplete: function (res) {
             this._changeState('publish');

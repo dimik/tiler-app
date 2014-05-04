@@ -8,15 +8,17 @@ modules.define('app-state-publish', [
 
     var PublishState = inherit(AppStateBase, {
         __contructor: function () {
-            this.__base.apply(this, arguments);
-
             this._name = 'publish';
+            this._title = 'Публикация слоя';
+
+            this.__base.apply(this, arguments);
         },
         init: function () {
+            this.__base.call(this);
+
             var app = this._app;
 
-            this._setupListeners();
-
+            app.addSourceLayer();
             app.publishLayer()
                 .then(function (data) {
                     app.popup
@@ -26,19 +28,25 @@ modules.define('app-state-publish', [
                 });
         },
         destroy: function () {
-            this._clearListeners();
-            this._app.popup
-                .clear();
-        },
-        _setupListeners: function () {
             var app = this._app;
 
-            app.popup.events
+            app.popup
+                .clear();
+            app.removeSourceLayer();
+
+            this.__base.call(this);
+        },
+        _setupListeners: function () {
+            this.__base.call(this);
+
+            this._app.popup.events
                 .add('cancel', this._onCancel, this);
         },
         _clearListeners: function () {
             this._app.sidebar.events
                 .remove('cancel', this._onSetupCancel, this);
+
+            this.__base.call(this);
         },
         _onCancel: function () {
             this._changeState('setup');

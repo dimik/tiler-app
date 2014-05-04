@@ -9,21 +9,26 @@ modules.define('app-state-load', [
 
     var LoadState = inherit(AppStateBase, {
         __constructor: function () {
-            this.__base.apply(this, arguments);
-
             this._name = 'load';
+            this._title = 'Выбор изображения';
+
+            this.__base.apply(this, arguments);
         },
         init: function () {
-            this._setupListeners();
+            this.__base.call(this);
+
             this._app.popup
                 .render('fileImageLoader');
         },
         destroy: function () {
-            this._clearListeners();
             this._app.popup
                 .clear();
+
+            this.__base.call(this);
         },
         _setupListeners: function () {
+            this.__base.call(this);
+
             this._app.popup
                 .events
                     .add('load', this._onImageLoad, this)
@@ -36,6 +41,8 @@ modules.define('app-state-load', [
                     .remove('error', this._onImageError, this)
                     .remove('loaderchange', this._onLoaderChange, this)
                     .remove('load', this._onImageLoad, this);
+
+            this.__base.call(this);
         },
         _onImageLoad: function (e) {
             var app = this._app,

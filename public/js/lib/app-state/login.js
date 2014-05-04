@@ -9,13 +9,17 @@ modules.define('app-state-login', [
 
     var LoginState = inherit(AppStateBase, {
         __constructor: function () {
-            this.__base.apply(this, arguments);
-
             this._name = 'login';
+            this._title = 'Авторизация';
+
+            this.__base.apply(this, arguments);
         },
         init: function () {
+            var params = querystring.parse(window.location.hash.substring(1));
+
+            this.__base.call(this);
+
             var token,
-                params = querystring.parse(window.location.hash.substring(1)),
                 next = function () {
                     config.set('token', token);
                     this._changeState('load');
@@ -38,6 +42,8 @@ modules.define('app-state-login', [
         destroy: function () {
             this._app.popup
                 .clear();
+
+            this.__base.call(this);
         }
     });
 
