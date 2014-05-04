@@ -38,6 +38,8 @@ modules.define('app-state-process', [
 
             app.popup
                 .clear();
+            app.tiler
+                .cancel();
             app.removeSourceLayer();
 
             this.__base.call(this);
