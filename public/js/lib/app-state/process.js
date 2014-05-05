@@ -6,7 +6,7 @@ modules.define('app-state-process', [
 ], function (provide, inherit, jQuery, AppStateBase, PreloaderLayout) {
 
     var ProcessState = inherit(AppStateBase, {
-        __contructor: function () {
+        __constructor: function () {
             this._name = 'process';
             this._title = 'Обработка изображения';
 
