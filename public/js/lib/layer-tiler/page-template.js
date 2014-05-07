@@ -46,7 +46,7 @@ var template = [
 '                type: layerName,',
 '                controls: ["zoomControl"]',
 '            }, {',
-'                projection: new ymaps.projection.Cartesian([[-10, -10], [10, 10]], [false, false])',
+'                projection: new ymaps.projection.Cartesian([[-1, -1], [1, 1]], [false, false])',
 '            });',
 '        });',
 '    </script>',
