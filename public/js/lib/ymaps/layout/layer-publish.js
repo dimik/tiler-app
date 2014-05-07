@@ -27,7 +27,7 @@ modules.define('ymaps-layout-layer-publish', [
         clear: function () {
             this._clearListeners();
 
-            LayerPublishLayout.superclass.build.apply(this, arguments);
+            LayerPublishLayout.superclass.clear.apply(this, arguments);
         },
         _createYaShare: function (options) {
             return new Ya.share(jQuery.extend({ element: 'ya-share' }, options));

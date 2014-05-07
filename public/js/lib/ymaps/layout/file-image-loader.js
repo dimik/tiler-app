@@ -34,7 +34,7 @@ modules.define('ymaps-layout-file-image-loader', [
         clear: function () {
             this._clearListeners();
 
-            FileImageLoaderLayout.superclass.build.apply(this, arguments);
+            FileImageLoaderLayout.superclass.clear.apply(this, arguments);
         },
         _setupListeners: function () {
             jQuery(document)
