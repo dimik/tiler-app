@@ -7,7 +7,7 @@ modules.define('app-state-publish', [
 ], function (provide, inherit, jQuery, jspath, AppStateBase, LayerPublishLayout) {
 
     var PublishState = inherit(AppStateBase, {
-        __contructor: function () {
+        __constructor: function () {
             this._name = 'publish';
             this._title = 'Публикация слоя';
 
