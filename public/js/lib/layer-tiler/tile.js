@@ -3,10 +3,8 @@ modules.define('layer-tiler-tile', [
     'vow',
     'layer-tiler-image-source',
     'node-canvas',
-    'node-util',
-    'node-fs',
     'tile-config'
-], function (provide, inherit, vow, ImageSource, Canvas, util, fs, config) {
+], function (provide, inherit, vow, ImageSource, Canvas, config) {
 
     /**
      * @class
@@ -21,21 +19,6 @@ modules.define('layer-tiler-tile', [
          */
         __constructor: function (size) {
             this._source = new Canvas(size, size);
-        },
-        /**
-         * Write canvas source to the image file.
-         * @borrows ImageSource.save
-         * @function
-         * @name Tile.save
-         * @param {String} url Path to the image.
-         * @param {String} [type="png"] Type of the image "png" or "jpg".
-         * @returns {vow.Promise} Promise A+.
-         */
-        save: function (path, x, y, zoom) {
-            var tileType = config.get('type'),
-                url = util.format(config.get('urlTemplate'), path, zoom, x, y, tileType.replace('image/', ''));
-
-            return this.__base.call(this, url, tileType);
         },
         resize: function (size) {
             var canvas = new Canvas(size, size),
@@ -72,15 +55,21 @@ modules.define('layer-tiler-tile', [
             return this;
         },
         getOpacity: function () {
-            return this.getSource().getContext().globalAlpha;
+            return this._source.getContext().globalAlpha;
         },
         setOpacity: function (opacity) {
-            this.getSource().getContext().globalAlpha = opacity;
+            this._source.getContext().globalAlpha = opacity;
 
             return this;
         },
+        getFileType: function () {
+            return config.get('type').replace('image/', '');
+        },
+        toFile: function (type) {
+            return this._source.toBlob(type || config.get('type'));
+        },
         toDataURL: function (type) {
-            return this.getSource().getElement().toDataURL(type);
+            return this._source.toDataURL(type || config.get('type'));
         }
     });
 

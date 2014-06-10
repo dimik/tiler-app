@@ -21,7 +21,7 @@ modules.define('app-state-process', [
             app.popup
                 .render('preloader', {
                     progress: 0,
-                    message: 'starting'
+                    message: 'creating folders'
                 });
 
             app.tiler

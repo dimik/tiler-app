@@ -78,10 +78,10 @@ modules.define('map-view-tile-source-layer', [
                 tileNumber = this.restrict(tileNumber, tileZoom);
 
                 if(tileNumber) {
-                    var tile = tileSource.getTile(tileNumber[0], tileNumber[1], tileZoom);
+                    var tile = tileSource.renderTile(tileNumber[0], tileNumber[1], tileZoom);
 
                     if(tile) {
-                        return tile.toDataURL(config.get('tileType'));
+                        return tile.toDataURL();
                     }
                 }
 
@@ -89,11 +89,7 @@ modules.define('map-view-tile-source-layer', [
             };
 
             layer.getZoomRange = function () {
-                var defer = ymaps.vow.defer();
-
-                defer.resolve(zoomRange);
-
-                return defer.promise();
+                return ymaps.vow.resolve(zoomRange);
             };
 
             return function () {

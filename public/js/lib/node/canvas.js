@@ -19,28 +19,29 @@ modules.define('node-canvas', [
         },
         createPNGStream: function (options) {
         },
-        toBuffer: function (type, callback) {
-            var dataURL = this.toDataURL(type),
-                data = dataURL.split(';base64,');
-
-            callback(null, this.__self.binarytoBlob(
-                atob(data[1]),
-                data[0].split(':')[1]
-            ));
-        },
-        toDataURL: function (type) {
-            return this._canvas.toDataURL(type);
-        }
-    }, {
-        binarytoBlob: function (data, type) {
-            var bytes = data.length,
+        toBuffer: function (type) {
+            var dataUrl = this._canvas.toDataURL(type),
+                data = atob(dataUrl.split(';base64,')[1]),
+                bytes = data.length,
                 view = new Uint8Array(new ArrayBuffer(bytes));
 
             for(var i = 0; i < bytes; i++) {
                 view[i] = data.charCodeAt(i);
             }
 
-            return new Blob([ view.buffer ], { type: type || 'application/octet-stream' });
+            return view.buffer;
+        },
+        toBlob: function (type) {
+            type = type || 'image/png';
+
+            if(typeof this._canvas.toBlob === 'function') {
+                return this._canvas.toBlob(type);
+            }
+
+            return new Blob([ this.toBuffer(type) ], { type: type });
+        },
+        toDataURL: function (type) {
+            return this._canvas.toDataURL(type);
         }
     });
 

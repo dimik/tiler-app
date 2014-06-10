@@ -4,8 +4,9 @@ modules.define('app-config', [
 
     provide(new OptionManager({
         tilerOutput: 'tiles-' + Date.now(),
+        tilerUrlTemplate: '/%s/%s/%s-%s.%s',
+        tilerRetryCount: 3,
 
-        tileUrlTemplate: '/%s/%s/%s-%s.%s',
         tileSize: 256,
         tileType: 'image/png',
         tileColor: 'rgba(0,0,0,0.0)',

@@ -159,7 +159,9 @@ modules.define('yandex-disk-model', [
             return this._methods.indexOf(name) >= 0;
         },
         _send: function (request) {
-            return jQuery.ajax(request);
+            return jQuery.ajax(jQuery.extend({
+                timeout: config.get('timeout')
+            }, request));
         }
     });
 

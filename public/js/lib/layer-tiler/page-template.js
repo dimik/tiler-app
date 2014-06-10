@@ -18,7 +18,7 @@ var template = [
 '        }',
 '    </style>',
 
-'    <script type="text/javascript" src="http://api-maps.yandex.ru/2.1-dev/?lang=ru-RU&load=package.full"></script>',
+'    <script type="text/javascript" src="http://api-maps.yandex.ru/2.1/?lang=ru-RU"></script>',
 '    <script type="text/javascript">',
 '        ymaps.ready(function () {',
 '            var layerName = "user#layer";',
@@ -27,11 +27,7 @@ var template = [
 '                var layer = new ymaps.Layer("./%z/%x-%y.${tileType}");',
 
 '                layer.getZoomRange = function () {',
-'                    var defer = ymaps.vow.defer();',
-
-'                    defer.resolve(zoomRange);',
-
-'                    return defer.promise();',
+'                    return ymaps.vow.resolve(zoomRange);',
 '                };',
 
 '                return layer;',
@@ -42,7 +38,7 @@ var template = [
 
 '            var map = new ymaps.Map("map", {',
 '                center: [0, 0],',
-'                zoom: 0,',
+'                zoom: ${layerMinZoom},',
 '                type: layerName,',
 '                controls: ["zoomControl"]',
 '            }, {',

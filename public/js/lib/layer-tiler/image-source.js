@@ -1,9 +1,8 @@
 modules.define('layer-tiler-image-source', [
     'inherit',
     'vow',
-    'node-canvas',
-    'node-fs'
-], function (provide, inherit, vow, Canvas, fs) {
+    'node-canvas'
+], function (provide, inherit, vow, Canvas) {
 
     /**
      * Base Class for Tile and TileSource.
@@ -79,35 +78,6 @@ modules.define('layer-tiler-image-source', [
             };
 
             source.src = url;
-
-            return defer.promise();
-        },
-        /**
-         * Write canvas source to the image file.
-         * @function
-         * @name ImageSource.open
-         * @param {String} url Path to the image file.
-         * @param {String} type Type of the image file.
-         * @returns {vow.Promise} Promise A+
-         */
-        save: function (url, type) {
-            var defer = vow.defer();
-
-            this._source.toBuffer(type, function (err, buf) {
-                if(err) {
-                    defer.reject(err);
-                }
-                else {
-                    fs.writeFile(url, buf, function (err) {
-                        if(err) {
-                            defer.reject(err);
-                        }
-                        else {
-                            defer.resolve();
-                        }
-                    });
-                }
-            });
 
             return defer.promise();
         }

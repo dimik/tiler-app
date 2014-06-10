@@ -51,7 +51,7 @@ modules.define('layer-tiler-tile-source', [
 
             return Math.ceil(log2(tilesCount));
         },
-        getTile: function (x, y, zoom) {
+        renderTile: function (x, y, zoom) {
             if(!this.isTileFound(x, y, zoom)) {
                 return null;
             }

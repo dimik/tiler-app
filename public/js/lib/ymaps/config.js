@@ -1,11 +1,10 @@
 modules.define('ymaps-config', function (provide) {
 
     provide({
-        url: 'http://api-maps.yandex.ru/2.1-dev/',
+        url: 'http://api-maps.yandex.ru/2.1/',
         params: {
-            lang: 'ru-RU',
-            load: 'package.full',
-            mode: 'debug'
+            // mode: 'debug',
+            lang: 'ru-RU'
         }
     });
 });

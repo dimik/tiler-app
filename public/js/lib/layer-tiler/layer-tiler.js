@@ -6,9 +6,10 @@ modules.define('layer-tiler', [
     'node-path',
     'node-fs',
     'vow-queue',
+    'vow-node',
     'layer-tiler-page-template',
     'layer-tiler-config'
-], function (provide, inherit, vow, TileSource, util, path, fs, Queue, PageTemplate, config) {
+], function (provide, inherit, vow, TileSource, util, path, fs, Queue, vowNode, PageTemplate, config) {
 
     /**
      * User-Map-Layer Tiler Class.
@@ -46,36 +47,35 @@ modules.define('layer-tiler', [
                 minZoom = source.getMinZoom(),
                 maxZoom = source.getMaxZoom(),
                 output = config.get('output'),
-                tasks = [],
-                enqueue = function (task, priority, weight) {
-                    tasks.push(queue.enqueue(task, { priority: priority, weight: weight }));
+                folders = [], tasks = [],
+                enqueue = function (task) {
+                    tasks.push(queue.enqueue(task, { priority: 1, weight: 1 }));
                 },
                 getProgress = function (num) {
                     return Math.round(num * 100 / tasks.length);
                 };
 
-            enqueue(this._createFolder.bind(this, output), 3, 10);
-
             for(var zoom = maxZoom; zoom >= minZoom; zoom--) {
-                var tilesCount = source.getTilesNumberAtZoom(zoom),
-                    folderName = path.join(output, zoom.toString(10));
+                var tilesCount = source.getTilesNumberAtZoom(zoom);
 
-                enqueue(this._createFolder.bind(this, folderName), 2, 10);
+                folders.push(path.join(output, zoom.toString(10)));
 
                 for(var x = 0; x < tilesCount; x++) {
                     for(var y = 0; y < tilesCount; y++) {
                         if(source.isTileFound(x, y, zoom)) {
-                            enqueue(this.renderTile.bind(this, x, y, zoom), 1, 1);
+                            enqueue(this.saveTile.bind(this, x, y, zoom));
                         }
                     }
                 }
             }
 
-            enqueue(this._saveIndexPage.bind(this), 1, 1);
+            return this._createFolders(folders)
+                .then(function () {
+                    queue.start();
 
-            queue.start();
-
-            return vow.all(tasks)
+                    return vow.all(tasks);
+                })
+                .then(this._saveIndexPage.bind(this))
                 .progress(function (message) {
                     var stats = queue.getStats();
 
@@ -92,25 +92,62 @@ modules.define('layer-tiler', [
         getTileSource: function () {
             return this._source;
         },
+        _execute: function (resource, handler, validate) {
+            var retries = config.get('retryCount'),
+                promise = handler();
+
+            while(retries--) {
+                promise = promise
+                    .fail(function (err) {
+                        return this._getStats(resource)
+                            .then(validate);
+                    }, this)
+                    .fail(handler);
+            }
+
+            return promise;
+        },
         /**
          * Render one tile.
          * @function
-         * @name LayerTiler.renderTile
+         * @name LayerTiler.saveTile
          * @param {Number} x Tile coordinate by X.
          * @param {Number} y Tile coordinate by Y.
          * @param {Number} zoom
          * @returns {vow.Promise} Promise A+.
          */
-        renderTile: function (x, y, zoom) {
-            var source = this._source,
-                defer = vow.defer();
+        saveTile: function (x, y, zoom) {
+            var tile = this._source.renderTile(x, y, zoom),
+                url = util.format(config.get('urlTemplate'), config.get('output'), zoom, x, y, tile.getFileType());
 
-            source.getTile(x, y, zoom)
-                .save(config.get('output'), x, y, zoom)
-                .done(function (res) {
-                    defer.notify(util.format('rendering tile: zoom=%s, x=%s, y=%s', zoom, x, y));
-                    defer.resolve(res);
-                });
+            return this._uploadFile(url, tile.toFile());
+        },
+        _uploadFile: function (url, data) {
+            var defer = vow.defer();
+
+            window.setTimeout(function () {
+                defer.notify(util.format('uploading file: %s', url));
+            });
+
+            this._execute(url, function () {
+                return vowNode.invoke(fs.writeFile, url, data);
+            }, function (stats) {
+                if(stats.isFile()) {
+                    return stats;
+                }
+
+                throw new TypeError('resource is not a file');
+            })
+            .done(
+                defer.resolve,
+                // defer.reject,
+                function (err) {
+                    console.log('upload failed %s', url, err.statusText || err);
+
+                    return err;
+                },
+                defer
+            );
 
             return defer.promise();
         },
@@ -123,37 +160,59 @@ modules.define('layer-tiler', [
          * @returns {vow.Promise} Promise A+.
          */
         _createFolder: function (name) {
-            var defer = vow.defer();
+            var url = path.resolve(name);
 
-            fs.mkdir(path.resolve(name), function (err) {
-                defer.notify(util.format('creating folder: name=%s', name));
-                if(err) {
-                    defer.reject(err);
+            return this._execute(url, function () {
+                return vowNode.invoke(fs.mkdir, url);
+            }, function (res) {
+                if(res.isDirectory()) {
+                    return res;
                 }
-                else {
-                    defer.resolve();
-                }
+
+                throw new TypeError('resource is not a directory');
             });
+        },
+        _createFolders: function (folders) {
+            var output = config.get('output');
 
-            return defer.promise();
+            return this._createFolder(output)
+                .then(function () {
+                    return vow.all(
+                        folders.map(this._createFolder, this)
+                    );
+                }, this);
+        },
+        _getStats: function (path) {
+            return vowNode.invoke(fs.stat, path)
+                .then(function (res) {
+                    console.log('%s exists', path);
+
+                    return res;
+                }, function (err) {
+                    console.log('%s does not exist', path);
+
+                    return err;
+                });
         },
         publish: function () {
-            var defer = vow.defer();
+            var url = config.get('output');
 
-            fs.chmod(config.get('output'), 'a+r', function (err, res) {
-                if(err) {
-                    defer.reject(err);
+            return this._execute(url, function () {
+                return vowNode.invoke(fs.chmod, url, 'a+r');
+            }, function (res) {
+                if(res.public_url) {
+                    return res;
                 }
-                else {
-                    defer.resolve(JSON.parse(res.toJSON()));
-                }
+
+                throw new TypeError('resource is not public');
+            })
+            .then(function (res) {
+                return JSON.parse(res.toJSON());
             });
-
-            return defer.promise();
         },
         _saveIndexPage: function () {
-            var defer = vow.defer(),
-                source = this._source,
+            var source = this._source,
+                url = path.join(config.get('output'), 'index.html'),
                 template = new PageTemplate(),
                 page = template.render({
                     layerMinZoom: source.getMinZoom(),
@@ -161,16 +220,7 @@ modules.define('layer-tiler', [
                     tileType: source.options.get('type').replace('image/', '')
                 });
 
-            fs.writeFile(path.join(config.get('output'), 'index.html'), page, function (err, res) {
-                if(err) {
-                    defer.reject(err);
-                }
-                else {
-                    defer.resolve(res);
-                }
-            });
-
-            return defer.promise();
+            return this._uploadFile(url, page);
         }
     });
 

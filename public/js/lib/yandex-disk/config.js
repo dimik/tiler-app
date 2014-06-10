@@ -5,6 +5,7 @@ modules.define('yandex-disk-config', [
 
     provide(new OptionManager({
         apiUrl: '/api/yandex/disk',
+        timeout: 30000,
         home: '/'
     }, parentConfig));
 });
