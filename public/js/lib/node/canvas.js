@@ -31,14 +31,15 @@ modules.define('node-canvas', [
 
             return view.buffer;
         },
-        toBlob: function (type) {
+        toBlob: function (fn, type) {
+            fn = fn || function () {};
             type = type || 'image/png';
 
             if(typeof this._canvas.toBlob === 'function') {
-                return this._canvas.toBlob(type);
+                return this._canvas.toBlob(fn, type);
             }
 
-            return new Blob([ this.toBuffer(type) ], { type: type });
+            return fn(new Blob([ this.toBuffer(type) ], { type: type }));
         },
         toDataURL: function (type) {
             return this._canvas.toDataURL(type);

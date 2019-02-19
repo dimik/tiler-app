@@ -66,7 +66,11 @@ modules.define('layer-tiler-tile', [
             return config.get('type').replace('image/', '');
         },
         toFile: function (type) {
-            return this._source.toBlob(type || config.get('type'));
+            var defer = vow.defer();
+            this._source.toBlob(function (blob) {
+                defer.resolve(blob);
+            }, type || config.get('type'));
+            return defer.promise();
         },
         toDataURL: function (type) {
             return this._source.toDataURL(type || config.get('type'));

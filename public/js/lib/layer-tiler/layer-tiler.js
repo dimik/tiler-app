@@ -120,7 +120,10 @@ modules.define('layer-tiler', [
             var tile = this._source.renderTile(x, y, zoom),
                 url = util.format(config.get('urlTemplate'), config.get('output'), zoom, x, y, tile.getFileType());
 
-            return this._uploadFile(url, tile.toFile());
+            return tile.toFile()
+                .then(function (data) {
+                    return this._uploadFile(url, data);
+                }, this);
         },
         _uploadFile: function (url, data) {
             var defer = vow.defer();

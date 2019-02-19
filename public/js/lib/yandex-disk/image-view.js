@@ -7,8 +7,7 @@ modules.define('yandex-disk-image-view', [
     var ImageView = inherit(BaseView, {
         toDataURL: function (type) {
             var defer = vow.defer(),
-                reader = new FileReader(),
-                blob = this.toBlob(type);
+                reader = new FileReader();
 
             reader.onload = function (e) {
                 defer.resolve(e.target.result);
@@ -22,7 +21,9 @@ modules.define('yandex-disk-image-view', [
                 );
             };
 
-            reader.readAsDataURL(blob);
+            this.toBlob(function (blob) {
+                reader.readAsDataURL(blob);
+            }, type);
 
             return defer.promise();
         },
@@ -41,8 +42,8 @@ modules.define('yandex-disk-image-view', [
 
             return img;
         },
-        toBlob: function (type) {
-            return toBlob(this._data, type);
+        toBlob: function (fn, type) {
+            return fn(toBlob(this._data, type));
         }
     }, {
         dataURLtoBlob: function (dataURL) {
